@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as ProductsSlugRouteImport } from './routes/products/$slug'
 import { Route as StoresIndexRouteImport } from './routes/stores/index'
@@ -19,6 +22,20 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ProductsIndexRoute = ProductsIndexRouteImport.update({
   id: '/products/',
@@ -43,6 +60,8 @@ const StoresSlugRoute = StoresSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof AuthenticatedCartRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/products/': typeof ProductsIndexRoute
@@ -50,6 +69,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof AuthenticatedCartRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/products': typeof ProductsIndexRoute
@@ -58,6 +79,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/products/': typeof ProductsIndexRoute
@@ -66,12 +90,28 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/products/$slug' | '/stores/$slug' | '/products/' | '/stores/'
+    | '/'
+    | '/auth'
+    | '/cart'
+    | '/products/$slug'
+    | '/stores/$slug'
+    | '/products/'
+    | '/stores/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/products/$slug' | '/stores/$slug' | '/products' | '/stores'
+  to:
+    | '/'
+    | '/auth'
+    | '/cart'
+    | '/products/$slug'
+    | '/stores/$slug'
+    | '/products'
+    | '/stores'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/cart'
     | '/products/$slug'
     | '/stores/$slug'
     | '/products/'
@@ -80,6 +120,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
   StoresSlugRoute: typeof StoresSlugRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
@@ -94,6 +136,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/cart': {
+      id: '/_authenticated/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof AuthenticatedCartRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/products/': {
       id: '/products/'
@@ -126,8 +189,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCartRoute: typeof AuthenticatedCartRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCartRoute: AuthenticatedCartRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ProductsSlugRoute: ProductsSlugRoute,
   StoresSlugRoute: StoresSlugRoute,
   ProductsIndexRoute: ProductsIndexRoute,
