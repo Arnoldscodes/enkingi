@@ -4,7 +4,7 @@ import { Package, ShoppingBag, Wallet, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/useAuth";
+import { useMySeller } from "@/hooks/useMySeller";
 import { formatRWF } from "@/lib/format";
 import type { Order } from "@/lib/types";
 
