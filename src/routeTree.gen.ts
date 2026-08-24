@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedBecomeASellerRouteImport } from './routes/_authenticated/become-a-seller'
 import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -21,6 +22,7 @@ import { Route as StoresIndexRouteImport } from './routes/stores/index'
 import { Route as StoresSlugRouteImport } from './routes/stores/$slug'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders/$orderId'
+import { Route as AuthenticatedSellerIndexRouteImport } from './routes/_authenticated/seller/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +38,12 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedBecomeASellerRoute =
+  AuthenticatedBecomeASellerRouteImport.update({
+    id: '/become-a-seller',
+    path: '/become-a-seller',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -83,10 +91,17 @@ const AuthenticatedOrdersOrderIdRoute =
     path: '/orders/$orderId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSellerIndexRoute =
+  AuthenticatedSellerIndexRouteImport.update({
+    id: '/seller/',
+    path: '/seller/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -96,10 +111,12 @@ export interface FileRoutesByFullPath {
   '/stores/': typeof StoresIndexRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/seller/': typeof AuthenticatedSellerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -109,12 +126,14 @@ export interface FileRoutesByTo {
   '/stores': typeof StoresIndexRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/seller': typeof AuthenticatedSellerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -124,12 +143,14 @@ export interface FileRoutesById {
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/_authenticated/seller/': typeof AuthenticatedSellerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/become-a-seller'
     | '/cart'
     | '/checkout'
     | '/profile'
@@ -139,10 +160,12 @@ export interface FileRouteTypes {
     | '/stores/'
     | '/orders/$orderId'
     | '/orders/'
+    | '/seller/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/become-a-seller'
     | '/cart'
     | '/checkout'
     | '/profile'
@@ -152,11 +175,13 @@ export interface FileRouteTypes {
     | '/stores'
     | '/orders/$orderId'
     | '/orders'
+    | '/seller'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/become-a-seller'
     | '/_authenticated/cart'
     | '/_authenticated/checkout'
     | '/_authenticated/profile'
@@ -166,6 +191,7 @@ export interface FileRouteTypes {
     | '/stores/'
     | '/_authenticated/orders/$orderId'
     | '/_authenticated/orders/'
+    | '/_authenticated/seller/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,6 +226,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/become-a-seller': {
+      id: '/_authenticated/become-a-seller'
+      path: '/become-a-seller'
+      fullPath: '/become-a-seller'
+      preLoaderRoute: typeof AuthenticatedBecomeASellerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/cart': {
       id: '/_authenticated/cart'
@@ -264,23 +297,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersOrderIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/seller/': {
+      id: '/_authenticated/seller/'
+      path: '/seller'
+      fullPath: '/seller/'
+      preLoaderRoute: typeof AuthenticatedSellerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBecomeASellerRoute: typeof AuthenticatedBecomeASellerRoute
   AuthenticatedCartRoute: typeof AuthenticatedCartRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
+  AuthenticatedSellerIndexRoute: typeof AuthenticatedSellerIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBecomeASellerRoute: AuthenticatedBecomeASellerRoute,
   AuthenticatedCartRoute: AuthenticatedCartRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
+  AuthenticatedSellerIndexRoute: AuthenticatedSellerIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
