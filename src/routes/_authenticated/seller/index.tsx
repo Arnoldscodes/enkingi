@@ -20,22 +20,6 @@ export const Route = createFileRoute("/_authenticated/seller/")({
   component: SellerDashboard,
 });
 
-export function useMySeller() {
-  const { user } = useAuth();
-  return useQuery({
-    queryKey: ["my-seller", user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sellers")
-        .select("*")
-        .eq("owner_id", user!.id)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-}
 
 function SellerDashboard() {
   const seller = useMySeller();
