@@ -1,9 +1,8 @@
 export function formatRWF(amount: number): string {
-  return new Intl.NumberFormat("en-RW", {
-    style: "currency",
-    currency: "RWF",
+  const value = new Intl.NumberFormat("en-RW", {
     maximumFractionDigits: 0,
   }).format(amount);
+  return `RWF ${value}`;
 }
 
 export function formatDate(value: string): string {
