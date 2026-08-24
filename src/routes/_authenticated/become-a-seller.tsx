@@ -78,7 +78,7 @@ function BecomeSellerPage() {
       slug: `${slugify(form.business_name)}-${Math.random().toString(36).slice(2, 6)}`,
       owner_name: form.owner_name,
       phone: form.phone,
-      email: form.email || user.email,
+      email: form.email || user.email || null,
       location: form.location,
       description: form.description,
       logo_url: form.logo_url || null,

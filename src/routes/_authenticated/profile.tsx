@@ -60,7 +60,7 @@ function ProfilePage() {
         phone,
         address,
         avatar_url: avatarUrl || null,
-        email: user.email,
+        email: user.email ?? null,
       });
     setSaving(false);
     if (error) {
