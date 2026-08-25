@@ -75,14 +75,19 @@ function ProfilePage() {
     <div className="container-page py-10">
       <h1 className="text-2xl font-bold">My profile</h1>
       <form onSubmit={save} className="surface-card mt-8 max-w-xl space-y-5 p-6">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Avatar className="h-16 w-16">
             <AvatarImage src={avatarUrl} alt="" />
             <AvatarFallback>{(fullName || user?.email || "?").slice(0, 1).toUpperCase()}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 space-y-2">
-            <Label htmlFor="avatar">Profile picture URL</Label>
-            <Input id="avatar" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+          <div className="flex-1">
+            <ImageUploader
+              label="Profile photo"
+              bucket="avatars"
+              value={avatarUrl ? [avatarUrl] : []}
+              onChange={(urls) => setAvatarUrl(urls[0] ?? "")}
+              hint="JPG or PNG, up to 5MB."
+            />
           </div>
         </div>
         <div className="space-y-2">
