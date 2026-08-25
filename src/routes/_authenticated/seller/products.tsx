@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMySeller } from "@/hooks/useMySeller";
+import { ImageUploader } from "@/components/site/ImageUploader";
 import { formatRWF } from "@/lib/format";
 import type { Product } from "@/lib/types";
 
@@ -46,7 +47,9 @@ interface FormState {
   price: string;
   stock: string;
   category_id: string;
-  images: string;
+  brand: string;
+  sku: string;
+  images: string[];
 }
 
 const EMPTY: FormState = {
@@ -55,7 +58,9 @@ const EMPTY: FormState = {
   price: "",
   stock: "0",
   category_id: "",
-  images: "",
+  brand: "",
+  sku: "",
+  images: [],
 };
 
 function slugify(value: string) {
@@ -112,7 +117,9 @@ function SellerProducts() {
       price: String(product.price),
       stock: String(product.stock),
       category_id: product.category_id ?? "",
-      images: (product.images ?? []).join("\n"),
+      brand: product.brand ?? "",
+      sku: product.sku ?? "",
+      images: product.images ?? [],
     });
     setOpen(true);
   };
@@ -128,10 +135,9 @@ function SellerProducts() {
       price: Number(form.price),
       stock: Number(form.stock),
       category_id: form.category_id || null,
-      images: form.images
-        .split("\n")
-        .map((v) => v.trim())
-        .filter(Boolean),
+      brand: form.brand || null,
+      sku: form.sku || null,
+      images: form.images,
     };
 
     const { error } = form.id
@@ -249,15 +255,32 @@ function SellerProducts() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="images">Image URLs (one per line)</Label>
-                <Textarea
-                  id="images"
-                  rows={3}
-                  value={form.images}
-                  onChange={(e) => setForm({ ...form, images: e.target.value })}
-                />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="brand">Brand</Label>
+                  <Input
+                    id="brand"
+                    value={form.brand}
+                    onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sku">SKU</Label>
+                  <Input
+                    id="sku"
+                    value={form.sku}
+                    onChange={(e) => setForm({ ...form, sku: e.target.value })}
+                  />
+                </div>
               </div>
+              <ImageUploader
+                label="Product images"
+                bucket="product-images"
+                multiple
+                value={form.images}
+                onChange={(urls) => setForm({ ...form, images: urls })}
+                hint="Add several photos — the first one is the cover."
+              />
               <Button type="submit" className="w-full" disabled={saving}>
                 {saving ? "Saving…" : "Save product"}
               </Button>

@@ -57,6 +57,8 @@ export interface Product {
   price: number;
   stock: number;
   images: string[];
+  brand?: string | null;
+  sku?: string | null;
   is_active: boolean;
   is_featured: boolean;
   sellers?: Pick<Seller, "business_name" | "slug" | "status" | "location"> | null;
