@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
+import { ImageUploader } from "@/components/site/ImageUploader";
 
 export const Route = createFileRoute("/_authenticated/become-a-seller")({
   head: () => ({
@@ -102,7 +103,9 @@ function BecomeSellerPage() {
           <p className="mt-2 text-sm text-muted-foreground">
             {existing.data.status === "approved"
               ? "Your storefront is verified and live on eNkingi."
-              : existing.data.status === "rejected"
+              : existing.data.status === "suspended"
+                ? "Your storefront is suspended. Please contact the eNkingi team."
+                : existing.data.status === "rejected"
                 ? "Your application was not approved. Please contact the eNkingi team."
                 : "Your application is pending verification by the eNkingi team."}
           </p>
@@ -149,12 +152,20 @@ function BecomeSellerPage() {
             <Textarea id="description" rows={4} value={form.description} onChange={set("description")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="logo">Logo image URL</Label>
-            <Input id="logo" value={form.logo_url} onChange={set("logo_url")} />
+            <ImageUploader
+              label="Business logo"
+              bucket="seller-assets"
+              value={form.logo_url ? [form.logo_url] : []}
+              onChange={(urls) => setForm((prev) => ({ ...prev, logo_url: urls[0] ?? "" }))}
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="cover">Cover image URL</Label>
-            <Input id="cover" value={form.cover_url} onChange={set("cover_url")} />
+            <ImageUploader
+              label="Cover image"
+              bucket="seller-assets"
+              value={form.cover_url ? [form.cover_url] : []}
+              onChange={(urls) => setForm((prev) => ({ ...prev, cover_url: urls[0] ?? "" }))}
+            />
           </div>
         </div>
         <Button type="submit" size="lg" disabled={saving}>
