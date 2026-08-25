@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,25 @@ function SellerOrders() {
       return (data ?? []) as unknown as Order[];
     },
   });
+
+  const sellerId = seller.data?.id;
+  useEffect(() => {
+    if (!sellerId) return;
+    const channel = supabase
+      .channel(`seller-orders-${sellerId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders", filter: `seller_id=eq.${sellerId}` },
+        (payload) => {
+          if (payload.eventType === "INSERT") toast.success("New order received");
+          void queryClient.invalidateQueries({ queryKey: ["seller-orders-full", sellerId] });
+        },
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [sellerId, queryClient]);
 
   const setStatus = async (orderId: string, status: OrderStatus) => {
     const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
