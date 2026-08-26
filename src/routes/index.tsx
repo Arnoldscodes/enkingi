@@ -142,7 +142,7 @@ function Home() {
           </div>
           <div className="overflow-hidden rounded-3xl shadow-[var(--shadow-lift)]">
             <img
-              src={heroImage}
+              src={hero?.hero_image || heroImage}
               alt="Shopkeeper at her fresh produce stall in Ruyenzi, Kigali"
               width={1408}
               height={1008}
