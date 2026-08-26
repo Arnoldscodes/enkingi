@@ -100,17 +100,19 @@ function Home() {
               Pilot • Ruyenzi, Kigali
             </span>
             <h1 className="mt-5 text-4xl font-bold leading-tight md:text-5xl">
-              Fair Prices From Your Neighborhood
+              {hero?.headline || "Fair Prices From Your Neighborhood"}
             </h1>
             <p className="mt-4 max-w-md text-base text-muted-foreground">
-              Discover trusted businesses in Ruyenzi and shop with confidence.
+              {hero?.subtitle || "Discover trusted businesses in Ruyenzi and shop with confidence."}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/products">Shop Now</Link>
+                <Link to="/products">{hero?.primary_button_text || "Shop Now"}</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/become-a-seller">Become a Seller</Link>
+                <Link to="/become-a-seller">
+                  {hero?.secondary_button_text || "Become a Seller"}
+                </Link>
               </Button>
             </div>
             <form
