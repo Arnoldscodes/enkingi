@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { HomepageManager } from "@/components/admin/HomepageManager";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate, formatRWF } from "@/lib/format";
 import { ORDER_STATUS_LABEL, type Order, type Product, type Seller } from "@/lib/types";
@@ -153,7 +154,12 @@ function AdminPage() {
           <TabsTrigger value="sellers">Sellers</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="homepage">Homepage</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="homepage" className="mt-6">
+          <HomepageManager />
+        </TabsContent>
 
         <TabsContent value="sellers" className="mt-6 space-y-3">
           {(sellers.data ?? []).map((seller) => (

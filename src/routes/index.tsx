@@ -21,6 +21,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SellerCard } from "@/components/site/SellerCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, Seller } from "@/lib/types";
+import type { HomepageSettings } from "@/components/admin/HomepageManager";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
 
 export const Route = createFileRoute("/")({
@@ -54,6 +55,20 @@ const CATEGORY_ICONS: Record<string, typeof Smartphone> = {
 function Home() {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
+
+  const homepage = useQuery({
+    queryKey: ["homepage-settings"],
+    queryFn: async (): Promise<HomepageSettings | null> => {
+      const { data, error } = await supabase
+        .from("homepage_settings")
+        .select("*")
+        .eq("status", "published")
+        .maybeSingle();
+      if (error) throw error;
+      return (data ?? null) as unknown as HomepageSettings | null;
+    },
+  });
+  const hero = homepage.data;
 
   const categories = useQuery({
     queryKey: ["categories"],
@@ -100,17 +115,19 @@ function Home() {
               Pilot • Ruyenzi, Kigali
             </span>
             <h1 className="mt-5 text-4xl font-bold leading-tight md:text-5xl">
-              Fair Prices From Your Neighborhood
+              {hero?.headline || "Fair Prices From Your Neighborhood"}
             </h1>
             <p className="mt-4 max-w-md text-base text-muted-foreground">
-              Discover trusted businesses in Ruyenzi and shop with confidence.
+              {hero?.subtitle || "Discover trusted businesses in Ruyenzi and shop with confidence."}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/products">Shop Now</Link>
+                <Link to="/products">{hero?.primary_button_text || "Shop Now"}</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/become-a-seller">Become a Seller</Link>
+                <Link to="/become-a-seller">
+                  {hero?.secondary_button_text || "Become a Seller"}
+                </Link>
               </Button>
             </div>
             <form
@@ -140,7 +157,7 @@ function Home() {
           </div>
           <div className="overflow-hidden rounded-3xl shadow-[var(--shadow-lift)]">
             <img
-              src={heroImage}
+              src={hero?.hero_image || heroImage}
               alt="Shopkeeper at her fresh produce stall in Ruyenzi, Kigali"
               width={1408}
               height={1008}
