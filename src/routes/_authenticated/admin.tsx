@@ -153,7 +153,12 @@ function AdminPage() {
           <TabsTrigger value="sellers">Sellers</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="homepage">Homepage</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="homepage" className="mt-6">
+          <HomepageManager />
+        </TabsContent>
 
         <TabsContent value="sellers" className="mt-6 space-y-3">
           {(sellers.data ?? []).map((seller) => (
