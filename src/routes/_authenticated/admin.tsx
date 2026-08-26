@@ -66,6 +66,32 @@ function AdminPage() {
     },
   });
 
+  const stats = useQuery({
+    queryKey: ["admin-stats"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const [sellersCount, pendingCount, customersCount, productsCount, ordersRows] = await Promise.all([
+        supabase.from("sellers").select("id", { count: "exact", head: true }),
+        supabase.from("sellers").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("products").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("total, status"),
+      ]);
+      const rows = ordersRows.data ?? [];
+      const revenue = rows
+        .filter((o) => o.status !== "rejected")
+        .reduce((sum, o) => sum + Number(o.total ?? 0), 0);
+      return {
+        sellers: sellersCount.count ?? 0,
+        pending: pendingCount.count ?? 0,
+        customers: customersCount.count ?? 0,
+        products: productsCount.count ?? 0,
+        orders: rows.length,
+        revenue,
+      };
+    },
+  });
+
   const setSellerStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("sellers").update({ status }).eq("id", id);
     if (error) {
@@ -74,6 +100,7 @@ function AdminPage() {
     }
     toast.success(`Seller ${status}`);
     void queryClient.invalidateQueries({ queryKey: ["admin-sellers"] });
+    void queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
   };
 
   const toggleProduct = async (product: Product) => {
@@ -104,6 +131,23 @@ function AdminPage() {
   return (
     <div className="container-page py-10">
       <h1 className="text-2xl font-bold">Admin console</h1>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[
+          { label: "Total sellers", value: String(stats.data?.sellers ?? 0) },
+          { label: "Pending sellers", value: String(stats.data?.pending ?? 0) },
+          { label: "Customers", value: String(stats.data?.customers ?? 0) },
+          { label: "Products", value: String(stats.data?.products ?? 0) },
+          { label: "Orders", value: String(stats.data?.orders ?? 0) },
+          { label: "Revenue", value: formatRWF(stats.data?.revenue ?? 0) },
+        ].map((card) => (
+          <div key={card.label} className="surface-card p-5">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
+            <p className="mt-2 text-2xl font-bold">{card.value}</p>
+          </div>
+        ))}
+      </div>
+
       <Tabs defaultValue="sellers" className="mt-8">
         <TabsList>
           <TabsTrigger value="sellers">Sellers</TabsTrigger>
@@ -121,7 +165,7 @@ function AdminPage() {
                 </p>
               </div>
               <Badge variant={seller.status === "approved" ? "default" : "secondary"}>
-                {seller.status}
+                {seller.status === "approved" ? "verified" : seller.status}
               </Badge>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => void setSellerStatus(seller.id, "approved")}>
@@ -133,6 +177,13 @@ function AdminPage() {
                   onClick={() => void setSellerStatus(seller.id, "rejected")}
                 >
                   Reject
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void setSellerStatus(seller.id, "suspended")}
+                >
+                  Suspend
                 </Button>
               </div>
             </div>
