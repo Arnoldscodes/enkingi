@@ -70,6 +70,42 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_settings: {
+        Row: {
+          created_at: string
+          headline: string
+          hero_image: string | null
+          id: string
+          primary_button_text: string
+          secondary_button_text: string
+          status: string
+          subtitle: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          headline?: string
+          hero_image?: string | null
+          id?: string
+          primary_button_text?: string
+          secondary_button_text?: string
+          status: string
+          subtitle?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          headline?: string
+          hero_image?: string | null
+          id?: string
+          primary_button_text?: string
+          secondary_button_text?: string
+          status?: string
+          subtitle?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
