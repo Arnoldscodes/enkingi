@@ -21,6 +21,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SellerCard } from "@/components/site/SellerCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, Seller } from "@/lib/types";
+import type { HomepageSettings } from "@/components/admin/HomepageManager";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
 
 export const Route = createFileRoute("/")({
