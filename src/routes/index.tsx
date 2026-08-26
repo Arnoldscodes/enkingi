@@ -55,6 +55,20 @@ function Home() {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
 
+  const homepage = useQuery({
+    queryKey: ["homepage-settings"],
+    queryFn: async (): Promise<HomepageSettings | null> => {
+      const { data, error } = await supabase
+        .from("homepage_settings")
+        .select("*")
+        .eq("status", "published")
+        .maybeSingle();
+      if (error) throw error;
+      return (data ?? null) as unknown as HomepageSettings | null;
+    },
+  });
+  const hero = homepage.data;
+
   const categories = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
