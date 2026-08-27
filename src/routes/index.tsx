@@ -22,6 +22,7 @@ import { SellerCard } from "@/components/site/SellerCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, Seller } from "@/lib/types";
 import type { HomepageSettings } from "@/components/admin/HomepageManager";
+import { resolveImageUrl } from "@/lib/upload";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
 
 export const Route = createFileRoute("/")({
@@ -65,7 +66,9 @@ function Home() {
         .eq("status", "published")
         .maybeSingle();
       if (error) throw error;
-      return (data ?? null) as unknown as HomepageSettings | null;
+      if (!data) return null;
+      const settings = data as unknown as HomepageSettings;
+      return { ...settings, hero_image: await resolveImageUrl(settings.hero_image) };
     },
   });
   const hero = homepage.data;
