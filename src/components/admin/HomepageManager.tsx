@@ -129,7 +129,7 @@ export function HomepageManager() {
           label="Hero image"
           bucket="seller-assets"
           value={form.hero_image ? [form.hero_image] : []}
-          onChange={(urls) => setForm((f) => ({ ...f, hero_image: urls[0] ?? null }))}
+          onChange={(urls) => void handleHeroChange(urls)}
           hint="Upload to replace the current hero image. Remove it to fall back to the default."
         />
 
