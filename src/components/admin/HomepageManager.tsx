@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/site/ImageUploader";
+import { deleteStoredImage, resolveImageUrl, toStorageReference } from "@/lib/upload";
 import heroFallback from "@/assets/hero-ruyenzi.jpg";
 
 export interface HomepageSettings {
@@ -40,6 +41,7 @@ const emptyForm: Form = {
 export function HomepageManager() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<Form>(emptyForm);
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const hydrated = useRef(false);
 
@@ -70,6 +72,9 @@ export function HomepageManager() {
       primary_button_text: source.primary_button_text,
       secondary_button_text: source.secondary_button_text,
     });
+    void resolveImageUrl(source.hero_image)
+      .then(setHeroPreview)
+      .catch(() => setHeroPreview(null));
   }, [draft, published]);
 
   const persist = async (values: Form, mode: "draft" | "publish") => {
@@ -87,11 +92,17 @@ export function HomepageManager() {
   };
 
   const handleHeroChange = async (urls: string[]) => {
-    const next = { ...form, hero_image: urls[0] ?? null };
+    const uploadedUrl = urls[0] ?? null;
+    const previousReference = form.hero_image;
+    const nextReference = uploadedUrl ? toStorageReference("seller-assets", uploadedUrl) : null;
+    const next = { ...form, hero_image: nextReference };
     setForm(next);
-    // Persist immediately so an uploaded image is never lost before publishing.
+    setHeroPreview(uploadedUrl);
     try {
       await persist(next, "draft");
+      if (previousReference && previousReference !== nextReference) {
+        await deleteStoredImage(previousReference);
+      }
       toast.success(next.hero_image ? "Hero image saved to draft" : "Hero image removed");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save hero image");
@@ -128,7 +139,7 @@ export function HomepageManager() {
         <ImageUploader
           label="Hero image"
           bucket="seller-assets"
-          value={form.hero_image ? [form.hero_image] : []}
+          value={heroPreview ? [heroPreview] : []}
           onChange={(urls) => void handleHeroChange(urls)}
           hint="Upload to replace the current hero image. Remove it to fall back to the default."
         />
@@ -198,7 +209,7 @@ export function HomepageManager() {
               </Button>
             </div>
             <img
-              src={form.hero_image ?? heroFallback}
+              src={heroPreview ?? heroFallback}
               alt="Homepage hero preview"
               className="aspect-video w-full rounded-xl object-cover"
             />
