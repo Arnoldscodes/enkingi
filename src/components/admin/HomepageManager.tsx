@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -41,9 +41,11 @@ export function HomepageManager() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<Form>(emptyForm);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
+  const hydrated = useRef(false);
 
   const settings = useQuery({
     queryKey: ["homepage-settings-admin"],
+    refetchOnWindowFocus: false,
     queryFn: async (): Promise<HomepageSettings[]> => {
       const { data, error } = await supabase.from("homepage_settings").select("*");
       if (error) throw error;
@@ -54,9 +56,13 @@ export function HomepageManager() {
   const draft = settings.data?.find((row) => row.status === "draft");
   const published = settings.data?.find((row) => row.status === "published");
 
+  // Hydrate the editor once. Re-hydrating on every refetch would wipe unsaved
+  // edits (e.g. a hero image that was just uploaded but not published yet).
   useEffect(() => {
+    if (hydrated.current) return;
     const source = draft ?? published;
     if (!source) return;
+    hydrated.current = true;
     setForm({
       hero_image: source.hero_image,
       headline: source.headline,
@@ -64,25 +70,46 @@ export function HomepageManager() {
       primary_button_text: source.primary_button_text,
       secondary_button_text: source.secondary_button_text,
     });
-  }, [draft?.id, published?.id, settings.dataUpdatedAt]);
+  }, [draft, published]);
+
+  const persist = async (values: Form, mode: "draft" | "publish") => {
+    const statuses = mode === "publish" ? ["draft", "published"] : ["draft"];
+    for (const status of statuses) {
+      const { error } = await supabase
+        .from("homepage_settings")
+        .update(values)
+        .eq("status", status)
+        .select("id");
+      if (error) throw error;
+    }
+    void queryClient.invalidateQueries({ queryKey: ["homepage-settings-admin"] });
+    void queryClient.invalidateQueries({ queryKey: ["homepage-settings"] });
+  };
+
+  const handleHeroChange = async (urls: string[]) => {
+    const next = { ...form, hero_image: urls[0] ?? null };
+    setForm(next);
+    // Persist immediately so an uploaded image is never lost before publishing.
+    try {
+      await persist(next, "draft");
+      toast.success(next.hero_image ? "Hero image saved to draft" : "Hero image removed");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save hero image");
+    }
+  };
 
   const save = async (mode: "draft" | "publish") => {
     setSaving(mode);
     try {
-      const statuses = mode === "publish" ? ["draft", "published"] : ["draft"];
-      for (const status of statuses) {
-        const { error } = await supabase.from("homepage_settings").update(form).eq("status", status);
-        if (error) throw error;
-      }
+      await persist(form, mode);
       toast.success(mode === "publish" ? "Homepage published" : "Draft saved");
-      void queryClient.invalidateQueries({ queryKey: ["homepage-settings-admin"] });
-      void queryClient.invalidateQueries({ queryKey: ["homepage-settings"] });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save homepage");
     } finally {
       setSaving(null);
     }
   };
+
 
   if (settings.isLoading) {
     return <p className="text-sm text-muted-foreground">Loading homepage settings…</p>;
