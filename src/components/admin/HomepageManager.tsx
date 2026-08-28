@@ -140,7 +140,7 @@ export function HomepageManager() {
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="surface-card space-y-5 p-5">
         <div>
-          <h2 className="text-lg font-semibold">Hero content</h2>
+          <h2 className="text-lg font-semibold">Hero Banner</h2>
           <p className="text-xs text-muted-foreground">
             Recommended hero image size: 1920×1080.
           </p>
