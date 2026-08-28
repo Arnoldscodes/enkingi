@@ -65,8 +65,11 @@ export function HomepageManager() {
     const source = draft ?? published;
     if (!source) return;
     hydrated.current = true;
+    const durableHero = source.hero_image
+      ? toStorageReference("seller-assets", source.hero_image)
+      : null;
     setForm({
-      hero_image: source.hero_image,
+      hero_image: durableHero,
       headline: source.headline,
       subtitle: source.subtitle,
       primary_button_text: source.primary_button_text,
@@ -100,7 +103,11 @@ export function HomepageManager() {
     setHeroPreview(uploadedUrl);
     try {
       await persist(next, "draft");
-      if (previousReference && previousReference !== nextReference) {
+      if (
+        previousReference &&
+        previousReference !== nextReference &&
+        previousReference !== published?.hero_image
+      ) {
         await deleteStoredImage(previousReference);
       }
       toast.success(next.hero_image ? "Hero image saved to draft" : "Hero image removed");
@@ -113,6 +120,9 @@ export function HomepageManager() {
     setSaving(mode);
     try {
       await persist(form, mode);
+      if (mode === "publish" && published?.hero_image && published.hero_image !== form.hero_image) {
+        await deleteStoredImage(published.hero_image);
+      }
       toast.success(mode === "publish" ? "Homepage published" : "Draft saved");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save homepage");
