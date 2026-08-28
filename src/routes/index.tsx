@@ -158,14 +158,19 @@ function Home() {
               </div>
             </form>
           </div>
-          <div className="overflow-hidden rounded-3xl shadow-[var(--shadow-lift)]">
-            <img
-              src={hero?.hero_image || heroImage}
-              alt="Shopkeeper at her fresh produce stall in Ruyenzi, Kigali"
-              width={1408}
-              height={1008}
-              className="h-full w-full object-cover"
-            />
+          <div className="aspect-[4/3] overflow-hidden rounded-3xl bg-muted shadow-[var(--shadow-lift)]">
+            {homepage.isLoading ? (
+              <Skeleton className="h-full w-full rounded-none" />
+            ) : (
+              <img
+                key={`${hero?.id ?? "default"}-${hero?.updated_at ?? "initial"}`}
+                src={hero?.hero_image || heroImage}
+                alt="Shopkeeper at her fresh produce stall in Ruyenzi, Kigali"
+                width={1408}
+                height={1008}
+                className="h-full w-full object-cover"
+              />
+            )}
           </div>
         </div>
       </section>
