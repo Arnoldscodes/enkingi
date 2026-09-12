@@ -8,6 +8,13 @@
       "when": 1789242197141,
       "tag": "0000_contact_messages_and_admin_email",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789242645003,
+      "tag": "0001_create_jobs",
+      "breakpoints": true
     }
   ]
 }

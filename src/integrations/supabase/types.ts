@@ -136,6 +136,62 @@ export type Database = {
         }
         Relationships: []
       }
+      jobs: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          description: string | null
+          employment_type: string
+          id: string
+          is_filled: boolean
+          location: string
+          openings: number
+          salary: string | null
+          seller_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          is_filled?: boolean
+          location?: string
+          openings?: number
+          salary?: string | null
+          seller_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          is_filled?: boolean
+          location?: string
+          openings?: number
+          salary?: string | null
+          seller_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
