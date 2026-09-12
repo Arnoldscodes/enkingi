@@ -51,10 +51,23 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-sm font-semibold">Pilot area</h3>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Deliveries currently available inside Ruyenzi only. Prices in RWF.
-          </p>
+          <h3 className="text-sm font-semibold">Contact</h3>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>
+              <Link to="/contact" className="hover:text-foreground">
+                Talk to us
+              </Link>
+            </li>
+            <li>
+              <a
+                href="mailto:enkingientreprise@gmail.com"
+                className="break-all hover:text-foreground"
+              >
+                enkingientreprise@gmail.com
+              </a>
+            </li>
+            <li>Deliveries inside Ruyenzi only. Prices in RWF.</li>
+          </ul>
         </div>
       </div>
       <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">

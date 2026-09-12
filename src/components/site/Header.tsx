@@ -19,6 +19,7 @@ const NAV = [
   { to: "/products", label: "Shop" },
   { to: "/stores", label: "Local businesses" },
   { to: "/become-a-seller", label: "Sell on eNkingi" },
+  { to: "/contact", label: "Contact us" },
 ];
 
 export function Header() {
