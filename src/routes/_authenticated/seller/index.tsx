@@ -91,6 +91,9 @@ function SellerDashboard() {
           <Button asChild variant="outline">
             <Link to="/seller/products">Products</Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link to="/seller/careers">Careers</Link>
+          </Button>
           <Button asChild>
             <Link to="/seller/orders">Orders</Link>
           </Button>

@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/useCart";
 const NAV = [
   { to: "/products", label: "Shop" },
   { to: "/stores", label: "Local businesses" },
+  { to: "/careers", label: "Careers" },
   { to: "/become-a-seller", label: "Sell on eNkingi" },
   { to: "/contact", label: "Contact us" },
 ];
