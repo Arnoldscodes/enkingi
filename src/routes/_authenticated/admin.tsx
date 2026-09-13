@@ -189,12 +189,44 @@ function AdminPage() {
           <TabsTrigger value="sellers">Sellers</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="jobs">Jobs</TabsTrigger>
           <TabsTrigger value="homepage">Homepage</TabsTrigger>
         </TabsList>
 
         <TabsContent value="homepage" className="mt-6">
           <HomepageManager />
         </TabsContent>
+
+        <TabsContent value="jobs" className="mt-6 space-y-3">
+          {(jobs.data ?? []).map((job) => (
+            <div key={job.id} className="surface-card flex flex-wrap items-center gap-4 p-4">
+              <div className="min-w-48 flex-1">
+                <p className="font-medium">{job.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {job.sellers?.business_name} • {employmentLabel(job.employment_type)} •{" "}
+                  {job.deadline ? formatDate(job.deadline) : "open until filled"}
+                </p>
+              </div>
+              <Badge variant={job.status === "approved" ? "default" : "secondary"}>{job.status}</Badge>
+              {job.is_filled && <Badge variant="outline">Filled</Badge>}
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => void setJobStatus(job.id, "approved")}>
+                  Approve
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => void setJobStatus(job.id, "rejected")}>
+                  Reject
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => void removeJob(job.id)}>
+                  Remove
+                </Button>
+              </div>
+            </div>
+          ))}
+          {(jobs.data ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">No job listings yet.</p>
+          )}
+        </TabsContent>
+
 
         <TabsContent value="sellers" className="mt-6 space-y-3">
           {(sellers.data ?? []).map((seller) => (
