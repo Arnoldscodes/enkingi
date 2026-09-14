@@ -112,11 +112,6 @@ function CareersPage() {
 
 function JobCard({ job }: { job: Job }) {
   const seller = job.sellers;
-  const applyHref = seller?.email
-    ? `mailto:${seller.email}?subject=${encodeURIComponent(`Application: ${job.title}`)}`
-    : seller?.phone
-      ? `tel:${seller.phone}`
-      : undefined;
 
   return (
     <article className="surface-card flex h-full flex-col p-5">
