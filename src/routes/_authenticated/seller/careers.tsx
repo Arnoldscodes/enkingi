@@ -117,14 +117,15 @@ function SellerCareers() {
 
     const { error } = form.id
       ? await supabase.from("jobs").update(payload).eq("id", form.id)
-      : await supabase.from("jobs").insert(payload);
+      : // New jobs from verified sellers go live immediately; admin can still reject/remove.
+        await supabase.from("jobs").insert({ ...payload, status: "approved" });
 
     setSaving(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success(form.id ? "Job updated" : "Job submitted for review");
+    toast.success(form.id ? "Job updated" : "Job published");
     setOpen(false);
     void refresh();
   };
