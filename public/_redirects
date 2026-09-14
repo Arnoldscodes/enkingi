@@ -1,1 +1,7 @@
-/*    /index.html   200
+# Exclude static asset paths from SPA rewrite
+/*.ico  /*.ico  200
+/*.png  /*.png  200
+/*.svg  /*.svg  200
+
+# Catch-all rule for SPA routes
+/*      /index.html  200
