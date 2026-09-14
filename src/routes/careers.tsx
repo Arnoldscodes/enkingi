@@ -82,7 +82,7 @@ function CareersPage() {
         {jobs.isLoading ? (
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
         ) : filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No open jobs match your search right now.</p>
+          <p className="text-sm text-muted-foreground">No opportunities available yet.</p>
         ) : (
           filtered.map((job) => <JobCard key={job.id} job={job} />)
         )}
