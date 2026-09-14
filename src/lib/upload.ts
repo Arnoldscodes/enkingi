@@ -49,6 +49,23 @@ export async function deleteStoredImage(reference: string | null): Promise<void>
   if (error) throw error;
 }
 
+/** Uploads any file (e.g. a CV in PDF) and returns a permanent storage:// reference. */
+export async function uploadDocument(
+  bucket: UploadBucket,
+  userId: string,
+  file: File,
+): Promise<string> {
+  const ext = (file.name.split(".").pop() ?? "pdf").toLowerCase().replace(/[^a-z0-9]/g, "") || "pdf";
+  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+    contentType: file.type || "application/pdf",
+    upsert: false,
+  });
+  if (error) throw error;
+  return `${STORAGE_REFERENCE_PREFIX}${bucket}/${path}`;
+}
+
 export async function uploadImage(bucket: UploadBucket, userId: string, file: File): Promise<string> {
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
   const path = `${userId}/${crypto.randomUUID()}.${ext}`;

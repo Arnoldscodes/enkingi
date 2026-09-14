@@ -1,12 +1,31 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, Briefcase, CalendarDays, MapPin, Search, Wallet } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@/hooks/useAuth";
+import { uploadDocument } from "@/lib/upload";
 import { formatDate } from "@/lib/format";
 import { employmentLabel, type Job } from "@/lib/jobs";
 
@@ -93,11 +112,6 @@ function CareersPage() {
 
 function JobCard({ job }: { job: Job }) {
   const seller = job.sellers;
-  const applyHref = seller?.email
-    ? `mailto:${seller.email}?subject=${encodeURIComponent(`Application: ${job.title}`)}`
-    : seller?.phone
-      ? `tel:${seller.phone}`
-      : undefined;
 
   return (
     <article className="surface-card flex h-full flex-col p-5">
@@ -144,16 +158,222 @@ function JobCard({ job }: { job: Job }) {
 
       <div className="mt-5 flex items-center justify-between gap-3">
         <Badge variant="secondary">{employmentLabel(job.employment_type)}</Badge>
-        {applyHref ? (
-          <Button asChild size="sm">
-            <a href={applyHref}>Apply</a>
-          </Button>
-        ) : (
-          <Button size="sm" disabled>
-            Apply
-          </Button>
-        )}
+        <ApplyDialog job={job} />
       </div>
     </article>
+  );
+}
+
+const EMPTY_APPLICATION = {
+  applicant_name: "",
+  phone: "",
+  email: "",
+  gender: "female",
+  date_of_birth: "",
+  location: "Ruyenzi",
+  motivation: "",
+  has_experience: "no",
+  experience: "",
+  start_date: "",
+};
+
+function ApplyDialog({ job }: { job: Job }) {
+  const { user } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState(EMPTY_APPLICATION);
+  const [cv, setCv] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  if (!user) {
+    return (
+      <Button asChild size="sm">
+        <Link to="/auth">Apply</Link>
+      </Button>
+    );
+  }
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      let cvReference: string | null = null;
+      if (cv) {
+        if (cv.type !== "application/pdf") throw new Error("Please upload your CV as a PDF file.");
+        cvReference = await uploadDocument("seller-assets", user.id, cv);
+      }
+
+      const { error } = await supabase.from("applications").insert({
+        job_id: job.id,
+        seller_id: job.seller_id,
+        applicant_id: user.id,
+        applicant_name: form.applicant_name,
+        phone: form.phone,
+        email: form.email,
+        gender: form.gender,
+        date_of_birth: form.date_of_birth,
+        location: form.location,
+        motivation: form.motivation,
+        has_experience: form.has_experience === "yes",
+        experience: form.has_experience === "yes" ? form.experience || null : null,
+        start_date: form.start_date || null,
+        cv_url: cvReference,
+      });
+      if (error) throw error;
+
+      toast.success("Application sent to the employer");
+      setForm(EMPTY_APPLICATION);
+      setCv(null);
+      setOpen(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not send your application");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm">Apply</Button>
+      </DialogTrigger>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Apply: {job.title}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor={`name-${job.id}`}>Full name</Label>
+              <Input
+                id={`name-${job.id}`}
+                required
+                maxLength={120}
+                value={form.applicant_name}
+                onChange={(e) => setForm({ ...form, applicant_name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`phone-${job.id}`}>Phone number</Label>
+              <Input
+                id={`phone-${job.id}`}
+                required
+                maxLength={30}
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor={`email-${job.id}`}>Email</Label>
+              <Input
+                id={`email-${job.id}`}
+                type="email"
+                required
+                maxLength={255}
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Gender</Label>
+              <Select value={form.gender} onValueChange={(value) => setForm({ ...form, gender: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="other">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor={`dob-${job.id}`}>Date of birth</Label>
+              <Input
+                id={`dob-${job.id}`}
+                type="date"
+                required
+                value={form.date_of_birth}
+                onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`loc-${job.id}`}>Current location</Label>
+              <Input
+                id={`loc-${job.id}`}
+                required
+                maxLength={120}
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`why-${job.id}`}>Why do you want this job?</Label>
+            <Textarea
+              id={`why-${job.id}`}
+              required
+              rows={3}
+              maxLength={1500}
+              value={form.motivation}
+              onChange={(e) => setForm({ ...form, motivation: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Previous experience</Label>
+              <Select
+                value={form.has_experience}
+                onValueChange={(value) => setForm({ ...form, has_experience: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="yes">Yes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`start-${job.id}`}>Available start date</Label>
+              <Input
+                id={`start-${job.id}`}
+                type="date"
+                value={form.start_date}
+                onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+              />
+            </div>
+          </div>
+          {form.has_experience === "yes" && (
+            <div className="space-y-2">
+              <Label htmlFor={`exp-${job.id}`}>Describe your experience</Label>
+              <Textarea
+                id={`exp-${job.id}`}
+                rows={3}
+                maxLength={1500}
+                value={form.experience}
+                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+              />
+            </div>
+          )}
+          <div className="space-y-2">
+            <Label htmlFor={`cv-${job.id}`}>CV (PDF)</Label>
+            <Input
+              id={`cv-${job.id}`}
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setCv(e.target.files?.[0] ?? null)}
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={saving}>
+            {saving ? "Sending…" : "Submit application"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

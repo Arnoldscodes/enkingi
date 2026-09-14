@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          applicant_id: string | null
+          applicant_name: string
+          created_at: string
+          cv_url: string | null
+          date_of_birth: string
+          email: string
+          experience: string | null
+          gender: string
+          has_experience: boolean
+          id: string
+          interview_at: string | null
+          interview_note: string | null
+          job_id: string
+          location: string
+          motivation: string
+          phone: string
+          seller_id: string
+          start_date: string | null
+          status: string
+        }
+        Insert: {
+          applicant_id?: string | null
+          applicant_name: string
+          created_at?: string
+          cv_url?: string | null
+          date_of_birth: string
+          email: string
+          experience?: string | null
+          gender: string
+          has_experience?: boolean
+          id?: string
+          interview_at?: string | null
+          interview_note?: string | null
+          job_id: string
+          location: string
+          motivation: string
+          phone: string
+          seller_id: string
+          start_date?: string | null
+          status?: string
+        }
+        Update: {
+          applicant_id?: string | null
+          applicant_name?: string
+          created_at?: string
+          cv_url?: string | null
+          date_of_birth?: string
+          email?: string
+          experience?: string | null
+          gender?: string
+          has_experience?: boolean
+          id?: string
+          interview_at?: string | null
+          interview_note?: string | null
+          job_id?: string
+          location?: string
+          motivation?: string
+          phone?: string
+          seller_id?: string
+          start_date?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           created_at: string

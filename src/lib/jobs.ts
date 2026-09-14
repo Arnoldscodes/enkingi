@@ -27,3 +27,37 @@ export interface Job {
   created_at: string;
   sellers?: Pick<Seller, "business_name" | "slug" | "logo_url" | "location" | "email" | "phone" | "status"> | null;
 }
+
+export const APPLICATION_STATUSES = [
+  { value: "submitted", label: "Submitted" },
+  { value: "interview", label: "Interview scheduled" },
+  { value: "accepted", label: "Accepted" },
+  { value: "rejected", label: "Rejected" },
+] as const;
+
+export function applicationStatusLabel(value: string): string {
+  return APPLICATION_STATUSES.find((s) => s.value === value)?.label ?? value;
+}
+
+export interface JobApplication {
+  id: string;
+  job_id: string;
+  seller_id: string;
+  applicant_id: string | null;
+  applicant_name: string;
+  phone: string;
+  email: string;
+  gender: string;
+  date_of_birth: string;
+  location: string;
+  motivation: string;
+  has_experience: boolean;
+  experience: string | null;
+  start_date: string | null;
+  cv_url: string | null;
+  status: string;
+  interview_at: string | null;
+  interview_note: string | null;
+  created_at: string;
+  jobs?: { title: string } | null;
+}
