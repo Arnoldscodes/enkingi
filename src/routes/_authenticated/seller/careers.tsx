@@ -456,6 +456,9 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
               </div>
 
               <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => void setStatus(selected, "reviewing")}>
+                  Mark as Reviewing
+                </Button>
                 <Button onClick={() => void setStatus(selected, "accepted")}>Accept</Button>
                 <Button variant="outline" onClick={() => void setStatus(selected, "rejected")}>
                   Reject

@@ -29,7 +29,8 @@ export interface Job {
 }
 
 export const APPLICATION_STATUSES = [
-  { value: "submitted", label: "Submitted" },
+  { value: "submitted", label: "New" },
+  { value: "reviewing", label: "Reviewing" },
   { value: "interview", label: "Interview scheduled" },
   { value: "accepted", label: "Accepted" },
   { value: "rejected", label: "Rejected" },
