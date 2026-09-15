@@ -320,7 +320,7 @@ function SellerCareers() {
   );
 }
 
-function ApplicantsPanel({ sellerId }: { sellerId?: string }) {
+function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
   const queryClient = useQueryClient();
   const [selected, setSelected] = useState<JobApplication | null>(null);
   const [cvUrl, setCvUrl] = useState<string | null>(null);
