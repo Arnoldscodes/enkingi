@@ -376,7 +376,8 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
           <div className="min-w-48 flex-1">
             <p className="font-medium">{application.applicant_name}</p>
             <p className="text-xs text-muted-foreground">
-              {application.jobs?.title ?? "Job"} • {application.phone} • {application.gender} • applied{" "}
+              {application.jobs?.title ?? "Job"} • {application.phone} • {application.email} •{" "}
+              {application.gender} • applied{" "}
               {formatDate(application.created_at)}
             </p>
           </div>
@@ -456,6 +457,9 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
               </div>
 
               <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => void setStatus(selected, "reviewing")}>
+                  Mark as Reviewing
+                </Button>
                 <Button onClick={() => void setStatus(selected, "accepted")}>Accept</Button>
                 <Button variant="outline" onClick={() => void setStatus(selected, "rejected")}>
                   Reject
