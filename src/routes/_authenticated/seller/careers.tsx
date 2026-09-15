@@ -314,7 +314,175 @@ function SellerCareers() {
         {(jobs.data ?? []).length === 0 && (
           <p className="text-sm text-muted-foreground">No job posts yet.</p>
         )}
-      </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function ApplicantsPanel({ sellerId }: { sellerId?: string }) {
+  const queryClient = useQueryClient();
+  const [selected, setSelected] = useState<JobApplication | null>(null);
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [interviewAt, setInterviewAt] = useState("");
+
+  const applications = useQuery({
+    queryKey: ["seller-applications", sellerId],
+    enabled: !!sellerId,
+    queryFn: async (): Promise<JobApplication[]> => {
+      const { data, error } = await supabase
+        .from("applications")
+        .select("*, jobs(title)")
+        .eq("seller_id", sellerId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as JobApplication[];
+    },
+  });
+
+  const openApplication = async (application: JobApplication) => {
+    setSelected(application);
+    setInterviewAt(application.interview_at ? application.interview_at.slice(0, 16) : "");
+    setCvUrl(null);
+    if (application.cv_url) {
+      try {
+        setCvUrl(await resolveImageUrl(application.cv_url));
+      } catch {
+        setCvUrl(null);
+      }
+    }
+  };
+
+  const setStatus = async (application: JobApplication, status: string, at?: string | null) => {
+    const { error } = await supabase
+      .from("applications")
+      .update({ status, ...(at !== undefined ? { interview_at: at } : {}) })
+      .eq("id", application.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Application marked as ${applicationStatusLabel(status).toLowerCase()}`);
+    setSelected(null);
+    void queryClient.invalidateQueries({ queryKey: ["seller-applications", sellerId] });
+  };
+
+  const list = applications.data ?? [];
+
+  return (
+    <div className="space-y-3">
+      {list.map((application) => (
+        <div key={application.id} className="surface-card flex flex-wrap items-center gap-4 p-4">
+          <div className="min-w-48 flex-1">
+            <p className="font-medium">{application.applicant_name}</p>
+            <p className="text-xs text-muted-foreground">
+              {application.jobs?.title ?? "Job"} • {application.phone} • {application.gender} • applied{" "}
+              {formatDate(application.created_at)}
+            </p>
+          </div>
+          <Badge variant={application.status === "accepted" ? "default" : "secondary"}>
+            {applicationStatusLabel(application.status)}
+          </Badge>
+          <Button variant="outline" size="sm" onClick={() => void openApplication(application)}>
+            View
+          </Button>
+        </div>
+      ))}
+      {!applications.isLoading && list.length === 0 && (
+        <p className="text-sm text-muted-foreground">No applications received yet.</p>
+      )}
+
+      <Dialog open={!!selected} onOpenChange={(next) => !next && setSelected(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{selected?.applicant_name}</DialogTitle>
+          </DialogHeader>
+          {selected && (
+            <div className="space-y-4 text-sm">
+              <dl className="grid gap-3 sm:grid-cols-2">
+                <Detail label="Job" value={selected.jobs?.title ?? "—"} />
+                <Detail label="Status" value={applicationStatusLabel(selected.status)} />
+                <Detail label="Phone" value={selected.phone} />
+                <Detail label="Email" value={selected.email} />
+                <Detail label="Gender" value={selected.gender} />
+                <Detail label="Date of birth" value={formatDate(selected.date_of_birth)} />
+                <Detail label="Current location" value={selected.location} />
+                <Detail
+                  label="Available from"
+                  value={selected.start_date ? formatDate(selected.start_date) : "Immediately"}
+                />
+                <Detail label="Applied" value={formatDate(selected.created_at)} />
+                <Detail label="Previous experience" value={selected.has_experience ? "Yes" : "No"} />
+              </dl>
+
+              <div>
+                <p className="text-xs uppercase text-muted-foreground">Why they want this job</p>
+                <p className="mt-1 whitespace-pre-wrap">{selected.motivation}</p>
+              </div>
+
+              {selected.has_experience && selected.experience && (
+                <div>
+                  <p className="text-xs uppercase text-muted-foreground">Experience</p>
+                  <p className="mt-1 whitespace-pre-wrap">{selected.experience}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs uppercase text-muted-foreground">CV</p>
+                {cvUrl ? (
+                  <a
+                    href={cvUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-block font-medium text-primary underline"
+                  >
+                    Open CV (PDF)
+                  </a>
+                ) : (
+                  <p className="mt-1 text-muted-foreground">
+                    {selected.cv_url ? "Loading CV…" : "No CV uploaded"}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="interview-at">Interview date &amp; time</Label>
+                <Input
+                  id="interview-at"
+                  type="datetime-local"
+                  value={interviewAt}
+                  onChange={(e) => setInterviewAt(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => void setStatus(selected, "accepted")}>Accept</Button>
+                <Button variant="outline" onClick={() => void setStatus(selected, "rejected")}>
+                  Reject
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={!interviewAt}
+                  onClick={() =>
+                    void setStatus(selected, "interview", new Date(interviewAt).toISOString())
+                  }
+                >
+                  Schedule interview
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-xs uppercase text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
     </div>
   );
 }
