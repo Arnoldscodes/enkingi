@@ -23,9 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMySeller } from "@/hooks/useMySeller";
 import { formatDate } from "@/lib/format";
-import { EMPLOYMENT_TYPES, employmentLabel, type Job } from "@/lib/jobs";
+import { resolveImageUrl } from "@/lib/upload";
+import {
+  EMPLOYMENT_TYPES,
+  applicationStatusLabel,
+  employmentLabel,
+  type Job,
+  type JobApplication,
+} from "@/lib/jobs";
 
 export const Route = createFileRoute("/_authenticated/seller/careers")({
   head: () => ({
