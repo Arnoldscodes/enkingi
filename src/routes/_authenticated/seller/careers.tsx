@@ -271,7 +271,17 @@ function SellerCareers() {
         </div>
       )}
 
-      <div className="mt-8 space-y-3">
+      <Tabs defaultValue="jobs" className="mt-8">
+        <TabsList>
+          <TabsTrigger value="jobs">Jobs</TabsTrigger>
+          <TabsTrigger value="applicants">Applicants</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="applicants" className="mt-6">
+          <ApplicantsPanel sellerId={seller.data?.id} />
+        </TabsContent>
+
+        <TabsContent value="jobs" className="mt-6 space-y-3">
         {(jobs.data ?? []).map((job) => (
           <div key={job.id} className="surface-card flex flex-wrap items-center gap-4 p-4">
             <div className="min-w-48 flex-1">
