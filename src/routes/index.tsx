@@ -9,6 +9,8 @@ import {
   ShoppingBasket,
   Sofa,
   GraduationCap,
+  Hammer,
+  Wrench,
   Scale,
   ShieldCheck,
   Truck,
@@ -51,6 +53,8 @@ const CATEGORY_ICONS: Record<string, typeof Smartphone> = {
   groceries: ShoppingBasket,
   home: Sofa,
   school: GraduationCap,
+  "construction-hardware": Hammer,
+  "garage-auto-parts": Wrench,
 };
 
 function Home() {
@@ -177,7 +181,7 @@ function Home() {
 
       <section className="container-page py-14">
         <h2 className="text-xl font-semibold">Shop by category</h2>
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {(categories.data ?? []).map((category) => {
             const Icon = CATEGORY_ICONS[category.slug] ?? ShoppingBasket;
             return (
