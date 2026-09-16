@@ -332,11 +332,26 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
     queryFn: async (): Promise<JobApplication[]> => {
       const { data, error } = await supabase
         .from("applications")
-        .select("*, jobs(title)")
+        .select("*, jobs!inner(title, seller_id)")
         .eq("seller_id", sellerId!)
+        .eq("jobs.seller_id", sellerId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as JobApplication[];
+    },
+  });
+
+  const sellerJobs = useQuery({
+    queryKey: ["seller-jobs-for-applicants", sellerId],
+    enabled: !!sellerId,
+    queryFn: async (): Promise<Array<{ id: string; title: string }>> => {
+      const { data, error } = await supabase
+        .from("jobs")
+        .select("id, title")
+        .eq("seller_id", sellerId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 
@@ -368,28 +383,47 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
   };
 
   const list = applications.data ?? [];
+  const jobList = sellerJobs.data ?? [];
+  const groups = jobList.map((job) => ({
+    job,
+    items: list.filter((application) => application.job_id === job.id),
+  }));
+  const orphans = list.filter((application) => !jobList.some((job) => job.id === application.job_id));
+  if (orphans.length > 0) {
+    groups.push({ job: { id: "other", title: "Other jobs" }, items: orphans });
+  }
 
   return (
-    <div className="space-y-3">
-      {list.map((application) => (
-        <div key={application.id} className="surface-card flex flex-wrap items-center gap-4 p-4">
-          <div className="min-w-48 flex-1">
-            <p className="font-medium">{application.applicant_name}</p>
-            <p className="text-xs text-muted-foreground">
-              {application.jobs?.title ?? "Job"} • {application.phone} • {application.email} •{" "}
-              {application.gender} • applied{" "}
-              {formatDate(application.created_at)}
-            </p>
+    <div className="space-y-6">
+      {groups.map((group) => (
+        <div key={group.job.id} className="space-y-3">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold">{group.job.title}</h2>
+            <Badge variant="outline">{group.items.length} applicant(s)</Badge>
           </div>
-          <Badge variant={application.status === "accepted" ? "default" : "secondary"}>
-            {applicationStatusLabel(application.status)}
-          </Badge>
-          <Button variant="outline" size="sm" onClick={() => void openApplication(application)}>
-            View
-          </Button>
+          {group.items.map((application) => (
+            <div key={application.id} className="surface-card flex flex-wrap items-center gap-4 p-4">
+              <div className="min-w-48 flex-1">
+                <p className="font-medium">{application.applicant_name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {application.jobs?.title ?? group.job.title} • {application.phone} • {application.email} •{" "}
+                  {application.gender} • applied {formatDate(application.created_at)}
+                </p>
+              </div>
+              <Badge variant={application.status === "accepted" ? "default" : "secondary"}>
+                {applicationStatusLabel(application.status)}
+              </Badge>
+              <Button variant="outline" size="sm" onClick={() => void openApplication(application)}>
+                View
+              </Button>
+            </div>
+          ))}
+          {group.items.length === 0 && (
+            <p className="text-sm text-muted-foreground">No applications for this job yet.</p>
+          )}
         </div>
       ))}
-      {!applications.isLoading && list.length === 0 && (
+      {!applications.isLoading && !sellerJobs.isLoading && groups.length === 0 && (
         <p className="text-sm text-muted-foreground">No applications received yet.</p>
       )}
 
