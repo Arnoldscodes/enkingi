@@ -332,11 +332,26 @@ function ApplicantsPanel({ sellerId }: { sellerId: string | undefined }) {
     queryFn: async (): Promise<JobApplication[]> => {
       const { data, error } = await supabase
         .from("applications")
-        .select("*, jobs(title)")
+        .select("*, jobs!inner(title, seller_id)")
         .eq("seller_id", sellerId!)
+        .eq("jobs.seller_id", sellerId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as JobApplication[];
+    },
+  });
+
+  const sellerJobs = useQuery({
+    queryKey: ["seller-jobs-for-applicants", sellerId],
+    enabled: !!sellerId,
+    queryFn: async (): Promise<Array<{ id: string; title: string }>> => {
+      const { data, error } = await supabase
+        .from("jobs")
+        .select("id, title")
+        .eq("seller_id", sellerId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 
