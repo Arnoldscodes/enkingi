@@ -135,6 +135,18 @@ function ContactPage() {
             </a>
           </div>
           <div>
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Phone className="h-5 w-5" />
+            </span>
+            <h2 className="mt-4 font-semibold">Call or WhatsApp</h2>
+            <a
+              href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`}
+              className="mt-1 block text-sm font-medium text-primary"
+            >
+              {CONTACT_PHONE}
+            </a>
+          </div>
+          <div>
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
               <MapPin className="h-5 w-5" />
             </span>
