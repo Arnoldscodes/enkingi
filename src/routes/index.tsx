@@ -25,6 +25,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, Seller } from "@/lib/types";
 import type { HomepageSettings } from "@/components/admin/HomepageManager";
 import { resolveImageUrl } from "@/lib/upload";
+import { HeroCarousel } from "@/components/site/HeroCarousel";
+import type { HeroSlide } from "@/lib/heroSlides";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
 
 export const Route = createFileRoute("/")({
@@ -60,6 +62,7 @@ const CATEGORY_ICONS: Record<string, typeof Smartphone> = {
 function Home() {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const homepage = useQuery({
     queryKey: ["homepage-settings"],
@@ -76,6 +79,26 @@ function Home() {
     },
   });
   const hero = homepage.data;
+
+  const slides = useQuery({
+    queryKey: ["hero-slides"],
+    queryFn: async (): Promise<HeroSlide[]> => {
+      const { data, error } = await supabase
+        .from("hero_slides")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      const rows = (data ?? []) as unknown as HeroSlide[];
+      return Promise.all(
+        rows.map(async (row) => ({
+          ...row,
+          image_url: row.image_url ? await resolveImageUrl(row.image_url).catch(() => null) : null,
+        })),
+      );
+    },
+  });
+  const activeSlide = (slides.data ?? [])[slideIndex] ?? null;
 
   const categories = useQuery({
     queryKey: ["categories"],
@@ -121,15 +144,25 @@ function Home() {
             <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
               Pilot • Ruyenzi, Kigali
             </span>
-            <h1 className="mt-5 text-4xl font-bold leading-tight md:text-5xl">
-              {hero?.headline || "Fair Prices From Your Neighborhood"}
-            </h1>
-            <p className="mt-4 max-w-md text-base text-muted-foreground">
-              {hero?.subtitle || "Discover trusted businesses in Ruyenzi and shop with confidence."}
-            </p>
+            <div key={activeSlide?.id ?? "static"} className="transition-opacity duration-700">
+              <h1 className="mt-5 text-4xl font-bold leading-tight md:text-5xl">
+                {activeSlide?.headline || hero?.headline || "Fair Prices From Your Neighborhood"}
+              </h1>
+              <p className="mt-4 max-w-md text-base text-muted-foreground">
+                {activeSlide?.subtitle ||
+                  hero?.subtitle ||
+                  "Discover trusted businesses in Ruyenzi and shop with confidence."}
+              </p>
+            </div>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/products">{hero?.primary_button_text || "Shop Now"}</Link>
+                {activeSlide ? (
+                  <a href={activeSlide.button_link || "/products"}>
+                    {activeSlide.button_text || "Shop Now"}
+                  </a>
+                ) : (
+                  <Link to="/products">{hero?.primary_button_text || "Shop Now"}</Link>
+                )}
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link to="/become-a-seller">
@@ -162,22 +195,16 @@ function Home() {
               </div>
             </form>
           </div>
-          <div className="aspect-[4/3] overflow-hidden rounded-3xl bg-muted shadow-[var(--shadow-lift)]">
-            {homepage.isLoading ? (
-              <Skeleton className="h-full w-full rounded-none" />
-            ) : (
-              <img
-                key={`${hero?.id ?? "default"}-${hero?.updated_at ?? "initial"}`}
-                src={hero?.hero_image || heroImage}
-                alt="Shopkeeper at her fresh produce stall in Ruyenzi, Kigali"
-                width={1408}
-                height={1008}
-                className="h-full w-full object-cover"
-              />
-            )}
-          </div>
+          <HeroCarousel
+            slides={slides.data ?? []}
+            index={slideIndex}
+            onIndexChange={setSlideIndex}
+            loading={homepage.isLoading || slides.isLoading}
+            fallbackImage={hero?.hero_image || heroImage}
+          />
         </div>
       </section>
+
 
       <section className="container-page py-14">
         <h2 className="text-xl font-semibold">Shop by category</h2>
