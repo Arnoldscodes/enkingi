@@ -181,8 +181,7 @@ function Home() {
           />
         </div>
       </section>
-        </div>
-      </section>
+
 
       <section className="container-page py-14">
         <h2 className="text-xl font-semibold">Shop by category</h2>
