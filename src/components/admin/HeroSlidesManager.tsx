@@ -91,7 +91,8 @@ export function HeroSlidesManager() {
     const from = current.findIndex((r) => r.id === sourceId);
     const to = current.findIndex((r) => r.id === targetId);
     if (from === -1 || to === -1) return;
-    const [moved] = current.splice(from, 1);
+    const moved = current.splice(from, 1)[0];
+    if (!moved) return;
     current.splice(to, 0, moved);
     void run("Slide order updated", async () => {
       for (const [i, row] of current.entries()) {
