@@ -25,6 +25,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, Seller } from "@/lib/types";
 import type { HomepageSettings } from "@/components/admin/HomepageManager";
 import { resolveImageUrl } from "@/lib/upload";
+import { HeroCarousel } from "@/components/site/HeroCarousel";
+import type { HeroSlide } from "@/lib/heroSlides";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
 
 export const Route = createFileRoute("/")({
@@ -60,6 +62,7 @@ const CATEGORY_ICONS: Record<string, typeof Smartphone> = {
 function Home() {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const homepage = useQuery({
     queryKey: ["homepage-settings"],
@@ -76,6 +79,26 @@ function Home() {
     },
   });
   const hero = homepage.data;
+
+  const slides = useQuery({
+    queryKey: ["hero-slides"],
+    queryFn: async (): Promise<HeroSlide[]> => {
+      const { data, error } = await supabase
+        .from("hero_slides")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      const rows = (data ?? []) as unknown as HeroSlide[];
+      return Promise.all(
+        rows.map(async (row) => ({
+          ...row,
+          image_url: row.image_url ? await resolveImageUrl(row.image_url).catch(() => null) : null,
+        })),
+      );
+    },
+  });
+  const activeSlide = (slides.data ?? [])[slideIndex] ?? null;
 
   const categories = useQuery({
     queryKey: ["categories"],
