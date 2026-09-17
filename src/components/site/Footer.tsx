@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
+const CONTACT_EMAIL = "enkingientreprise@gmail.com";
+const CONTACT_PHONE = "+250 791 861 439";
+
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-border bg-secondary/40">
@@ -60,10 +63,18 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="mailto:enkingientreprise@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="break-all hover:text-foreground"
               >
-                enkingientreprise@gmail.com
+                {CONTACT_EMAIL}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`}
+                className="hover:text-foreground"
+              >
+                {CONTACT_PHONE}
               </a>
             </li>
             <li>Deliveries inside Ruyenzi only. Prices in RWF.</li>

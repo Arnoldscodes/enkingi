@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, MapPin, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 
 export const CONTACT_EMAIL = "enkingientreprise@gmail.com";
+export const CONTACT_PHONE = "+250 791 861 439";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -131,6 +132,18 @@ function ContactPage() {
               className="mt-1 block break-all text-sm font-medium text-primary"
             >
               {CONTACT_EMAIL}
+            </a>
+          </div>
+          <div>
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Phone className="h-5 w-5" />
+            </span>
+            <h2 className="mt-4 font-semibold">Call or WhatsApp</h2>
+            <a
+              href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`}
+              className="mt-1 block text-sm font-medium text-primary"
+            >
+              {CONTACT_PHONE}
             </a>
           </div>
           <div>
