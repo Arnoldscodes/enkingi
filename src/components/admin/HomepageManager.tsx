@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/site/ImageUploader";
 import { deleteStoredImage, resolveImageUrl, toStorageReference } from "@/lib/upload";
+import { HeroSlidesManager } from "@/components/admin/HeroSlidesManager";
 import heroFallback from "@/assets/hero-ruyenzi.jpg";
 
 export interface HomepageSettings {
@@ -137,6 +138,8 @@ export function HomepageManager() {
   }
 
   return (
+    <div className="space-y-6">
+    <HeroSlidesManager />
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="surface-card space-y-5 p-5">
         <div>
@@ -229,6 +232,7 @@ export function HomepageManager() {
           Published {published?.updated_at ? new Date(published.updated_at).toLocaleString() : "—"}
         </p>
       </div>
+    </div>
     </div>
   );
 }
