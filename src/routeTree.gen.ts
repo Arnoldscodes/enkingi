@@ -19,6 +19,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedBecomeASellerRouteImport } from './routes/_authenticated/become-a-seller'
 import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedMyApplicationsRouteImport } from './routes/_authenticated/my-applications'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as ProductsSlugRouteImport } from './routes/products/$slug'
@@ -81,6 +82,12 @@ const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMyApplicationsRoute =
+  AuthenticatedMyApplicationsRouteImport.update({
+    id: '/my-applications',
+    path: '/my-applications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -153,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
   '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/_authenticated/become-a-seller': typeof AuthenticatedBecomeASellerRoute
   '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
+  '/_authenticated/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/become-a-seller'
     | '/cart'
     | '/checkout'
+    | '/my-applications'
     | '/profile'
     | '/products/$slug'
     | '/stores/$slug'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/become-a-seller'
     | '/cart'
     | '/checkout'
+    | '/my-applications'
     | '/profile'
     | '/products/$slug'
     | '/stores/$slug'
@@ -268,6 +280,7 @@ export interface FileRouteTypes {
     | '/_authenticated/become-a-seller'
     | '/_authenticated/cart'
     | '/_authenticated/checkout'
+    | '/_authenticated/my-applications'
     | '/_authenticated/profile'
     | '/products/$slug'
     | '/stores/$slug'
@@ -366,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/my-applications': {
+      id: '/_authenticated/my-applications'
+      path: '/my-applications'
+      fullPath: '/my-applications'
+      preLoaderRoute: typeof AuthenticatedMyApplicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -451,6 +471,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBecomeASellerRoute: typeof AuthenticatedBecomeASellerRoute
   AuthenticatedCartRoute: typeof AuthenticatedCartRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
+  AuthenticatedMyApplicationsRoute: typeof AuthenticatedMyApplicationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
   AuthenticatedSellerCareersRoute: typeof AuthenticatedSellerCareersRoute
@@ -465,6 +486,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBecomeASellerRoute: AuthenticatedBecomeASellerRoute,
   AuthenticatedCartRoute: AuthenticatedCartRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
+  AuthenticatedMyApplicationsRoute: AuthenticatedMyApplicationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
   AuthenticatedSellerCareersRoute: AuthenticatedSellerCareersRoute,
