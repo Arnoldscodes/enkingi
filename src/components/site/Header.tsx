@@ -96,6 +96,9 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link to="/orders">My orders</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/my-applications">My job applications</Link>
+                </DropdownMenuItem>
                 {isSeller && (
                   <DropdownMenuItem asChild>
                     <Link to="/seller">
