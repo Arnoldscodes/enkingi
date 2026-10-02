@@ -1,14 +1,8 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Block authentication/private routes
+Disallow: /auth
+
+# Sitemap location
+Sitemap: https://enkingi.shop/sitemap.xml
