@@ -101,6 +101,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico?v=2" },
       { rel: "shortcut icon", href: "/favicon.ico?v=2" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "eNkingi",
+          "alternateName": "eNkingi Trading Platform",
+          "url": "https://enkingi.shop",
+          "description": "An online trading and e-commerce platform connecting buyers and local sellers in Ruyenzi, Rwanda.",
+          "founder": {
+            "@type": "Person",
+            "name": "MUGISHA Rugwiro Alnaud",
+            "jobTitle": "Founder & Owner"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Ruyenzi",
+            "addressCountry": "RW"
+          },
+          "areaServed": ["Ruyenzi", "Kigali", "Kamonyi"],
+          "priceRange": "$$"
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
