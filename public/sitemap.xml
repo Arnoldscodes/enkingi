@@ -1,7 +1,24 @@
-https://enkingi.shop/
-https://enkingi.shop/products
-https://enkingi.shop/contact
-https://enkingi.shop/careers
-https://enkingi.shop/stores
-https://enkingi.shop/become-a-seller
-https://enkingi.shop/auth
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://enkingi.shop/</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/products</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/contact</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/careers</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/stores</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/become-a-seller</loc>
+  </url>
+  <url>
+    <loc>https://enkingi.shop/auth</loc>
+  </url>
+</urlset>
