@@ -497,7 +497,7 @@ const rw: Record<TranslationKey, string> = {
   "seller.pending": "Ubusabe bwawe buracyasuzumwa n'itsinda rya eNkingi.",
   "seller.dashboard": "Jya ku kibaho cy'umucuruzi",
 
-  "careers.title": "Akazi i Ruyenzi",
+  "careers.title": "Akazi ku Ruyenzi",
   "careers.subtitle": "Akazi gatangwa n'ubucuruzi bwemejwe kuri eNkingi. Igerageza rikorerwa i Ruyenzi, Kigali gusa.",
   "careers.search": "Shakisha izina ry'akazi, ubucuruzi cyangwa ubwoko",
   "careers.none": "Nta kazi karaboneka ubu.",
