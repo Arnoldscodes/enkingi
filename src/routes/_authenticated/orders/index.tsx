@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate, formatRWF } from "@/lib/format";
 import { ORDER_STATUS_LABEL, type Order } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/orders/")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/orders/")({
 });
 
 function OrdersPage() {
+  const { t } = useT();
   const { user } = useAuth();
 
   const orders = useQuery({
@@ -40,13 +42,13 @@ function OrdersPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">My orders</h1>
+      <h1 className="text-2xl font-bold">{t("orders.title")}</h1>
       {list.length === 0 && !orders.isLoading ? (
         <div className="surface-card mt-8 p-10 text-center">
-          <p className="font-medium">No orders yet</p>
+          <p className="font-medium">{t("orders.none")}</p>
           <Button asChild className="mt-4">
             <Link to="/products" search={{ q: undefined, category: undefined }}>
-              Start shopping
+              {t("common.startShopping")}
             </Link>
           </Button>
         </div>
@@ -67,7 +69,7 @@ function OrdersPage() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-primary">{formatRWF(Number(order.total))}</span>
-                <Badge variant="secondary">{ORDER_STATUS_LABEL[order.status] ?? order.status}</Badge>
+                <Badge variant="secondary">{t(`status.${order.status}`)}</Badge>
               </div>
             </Link>
           ))}

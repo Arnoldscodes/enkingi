@@ -28,6 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { uploadDocument } from "@/lib/upload";
 import { formatDate } from "@/lib/format";
 import { employmentLabel, type Job } from "@/lib/jobs";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/careers")({
   head: () => ({
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/careers")({
 });
 
 function CareersPage() {
+  const { t } = useT();
   const [term, setTerm] = useState("");
 
   const jobs = useQuery({
@@ -81,9 +83,9 @@ function CareersPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Careers in Ruyenzi</h1>
+      <h1 className="text-2xl font-bold">{t("careers.title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Jobs posted by verified businesses on eNkingi. Pilot limited to Ruyenzi, Kigali.
+        {t("careers.subtitle")}
       </p>
 
       <div className="relative mt-6 max-w-md">
@@ -91,9 +93,9 @@ function CareersPage() {
         <Input
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          placeholder="Search job title, business or type"
+          placeholder={t("careers.search")}
           className="pl-9"
-          aria-label="Search jobs"
+          aria-label={t("careers.search")}
         />
       </div>
 
@@ -101,7 +103,7 @@ function CareersPage() {
         {jobs.isLoading ? (
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
         ) : filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No opportunities available yet.</p>
+          <p className="text-sm text-muted-foreground">{t("careers.none")}</p>
         ) : (
           filtered.map((job) => <JobCard key={job.id} job={job} />)
         )}
@@ -111,6 +113,7 @@ function CareersPage() {
 }
 
 function JobCard({ job }: { job: Job }) {
+  const { t } = useT();
   const seller = job.sellers;
 
   return (
@@ -130,7 +133,7 @@ function JobCard({ job }: { job: Job }) {
           <h2 className="truncate font-semibold">{job.title}</h2>
           <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
             {seller?.business_name}
-            <BadgeCheck className="h-3.5 w-3.5 text-primary" aria-label="Verified business" />
+            <BadgeCheck className="h-3.5 w-3.5 text-primary" aria-label={t("common.verified")} />
           </p>
         </div>
       </div>
@@ -144,20 +147,20 @@ function JobCard({ job }: { job: Job }) {
           <MapPin className="h-4 w-4" /> {job.location}
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Briefcase className="h-4 w-4" /> {employmentLabel(job.employment_type)}
-          {job.openings > 1 && <span>• {job.openings} openings</span>}
+          <Briefcase className="h-4 w-4" /> {t(`emp.${job.employment_type}`)}
+          {job.openings > 1 && <span>• {t("careers.openings", { n: job.openings })}</span>}
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Wallet className="h-4 w-4" /> {job.salary || "Salary on request"}
+          <Wallet className="h-4 w-4" /> {job.salary || t("careers.salaryOnRequest")}
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           <CalendarDays className="h-4 w-4" />
-          {job.deadline ? `Apply before ${formatDate(job.deadline)}` : "Open until filled"}
+          {job.deadline ? t("careers.applyBefore", { date: formatDate(job.deadline) }) : t("careers.openUntilFilled")}
         </div>
       </dl>
 
       <div className="mt-5 flex items-center justify-between gap-3">
-        <Badge variant="secondary">{employmentLabel(job.employment_type)}</Badge>
+        <Badge variant="secondary">{t(`emp.${job.employment_type}`)}</Badge>
         <ApplyDialog job={job} />
       </div>
     </article>
@@ -178,6 +181,7 @@ const EMPTY_APPLICATION = {
 };
 
 function ApplyDialog({ job }: { job: Job }) {
+  const { t } = useT();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_APPLICATION);
@@ -187,7 +191,7 @@ function ApplyDialog({ job }: { job: Job }) {
   if (!user) {
     return (
       <Button asChild size="sm">
-        <Link to="/auth">Apply</Link>
+        <Link to="/auth">{t("careers.apply")}</Link>
       </Button>
     );
   }
@@ -198,7 +202,7 @@ function ApplyDialog({ job }: { job: Job }) {
     try {
       let cvReference: string | null = null;
       if (cv) {
-        if (cv.type !== "application/pdf") throw new Error("Please upload your CV as a PDF file.");
+        if (cv.type !== "application/pdf") throw new Error(t("careers.pdfOnly"));
         cvReference = await uploadDocument("seller-assets", user.id, cv);
       }
 
@@ -220,12 +224,12 @@ function ApplyDialog({ job }: { job: Job }) {
       });
       if (error) throw error;
 
-      toast.success("Application sent to the employer");
+      toast.success(t("careers.sent"));
       setForm(EMPTY_APPLICATION);
       setCv(null);
       setOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not send your application");
+      toast.error(error instanceof Error ? error.message : t("careers.failed"));
     } finally {
       setSaving(false);
     }
@@ -234,16 +238,16 @@ function ApplyDialog({ job }: { job: Job }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">Apply</Button>
+        <Button size="sm">{t("careers.apply")}</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Apply: {job.title}</DialogTitle>
+          <DialogTitle>{t("careers.applyFor", { title: job.title })}</DialogTitle>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor={`name-${job.id}`}>Full name</Label>
+              <Label htmlFor={`name-${job.id}`}>{t("common.fullName")}</Label>
               <Input
                 id={`name-${job.id}`}
                 required
@@ -253,7 +257,7 @@ function ApplyDialog({ job }: { job: Job }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`phone-${job.id}`}>Phone number</Label>
+              <Label htmlFor={`phone-${job.id}`}>{t("common.phone")}</Label>
               <Input
                 id={`phone-${job.id}`}
                 required
@@ -265,7 +269,7 @@ function ApplyDialog({ job }: { job: Job }) {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor={`email-${job.id}`}>Email</Label>
+              <Label htmlFor={`email-${job.id}`}>{t("common.email")}</Label>
               <Input
                 id={`email-${job.id}`}
                 type="email"
@@ -276,22 +280,22 @@ function ApplyDialog({ job }: { job: Job }) {
               />
             </div>
             <div className="space-y-2">
-              <Label>Gender</Label>
+              <Label>{t("careers.gender")}</Label>
               <Select value={form.gender} onValueChange={(value) => setForm({ ...form, gender: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="other">Prefer not to say</SelectItem>
+                  <SelectItem value="female">{t("careers.female")}</SelectItem>
+                  <SelectItem value="male">{t("careers.male")}</SelectItem>
+                  <SelectItem value="other">{t("careers.other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor={`dob-${job.id}`}>Date of birth</Label>
+              <Label htmlFor={`dob-${job.id}`}>{t("careers.dob")}</Label>
               <Input
                 id={`dob-${job.id}`}
                 type="date"
@@ -301,7 +305,7 @@ function ApplyDialog({ job }: { job: Job }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`loc-${job.id}`}>Current location</Label>
+              <Label htmlFor={`loc-${job.id}`}>{t("careers.location")}</Label>
               <Input
                 id={`loc-${job.id}`}
                 required
@@ -312,7 +316,7 @@ function ApplyDialog({ job }: { job: Job }) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`why-${job.id}`}>Why do you want this job?</Label>
+            <Label htmlFor={`why-${job.id}`}>{t("careers.why")}</Label>
             <Textarea
               id={`why-${job.id}`}
               required
@@ -324,7 +328,7 @@ function ApplyDialog({ job }: { job: Job }) {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Previous experience</Label>
+              <Label>{t("careers.experience")}</Label>
               <Select
                 value={form.has_experience}
                 onValueChange={(value) => setForm({ ...form, has_experience: value })}
@@ -333,13 +337,13 @@ function ApplyDialog({ job }: { job: Job }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="no">No</SelectItem>
-                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">{t("careers.no")}</SelectItem>
+                  <SelectItem value="yes">{t("careers.yes")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`start-${job.id}`}>Available start date</Label>
+              <Label htmlFor={`start-${job.id}`}>{t("careers.start")}</Label>
               <Input
                 id={`start-${job.id}`}
                 type="date"
@@ -350,7 +354,7 @@ function ApplyDialog({ job }: { job: Job }) {
           </div>
           {form.has_experience === "yes" && (
             <div className="space-y-2">
-              <Label htmlFor={`exp-${job.id}`}>Describe your experience</Label>
+              <Label htmlFor={`exp-${job.id}`}>{t("careers.describe")}</Label>
               <Textarea
                 id={`exp-${job.id}`}
                 rows={3}
@@ -370,7 +374,7 @@ function ApplyDialog({ job }: { job: Job }) {
             />
           </div>
           <Button type="submit" className="w-full" disabled={saving}>
-            {saving ? "Sending…" : "Submit application"}
+            {saving ? t("common.sending") : t("careers.submit")}
           </Button>
         </form>
       </DialogContent>

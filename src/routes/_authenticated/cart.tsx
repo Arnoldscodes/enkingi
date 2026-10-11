@@ -3,6 +3,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { formatRWF } from "@/lib/format";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/cart")({
   head: () => ({
@@ -17,18 +18,19 @@ export const Route = createFileRoute("/_authenticated/cart")({
 });
 
 function CartPage() {
+  const { t } = useT();
   const { items, subtotal, updateQuantity, removeItem, isLoading } = useCart();
 
   if (!isLoading && items.length === 0) {
     return (
       <div className="container-page py-20 text-center">
-        <h1 className="text-xl font-semibold">Your cart is empty</h1>
+        <h1 className="text-xl font-semibold">{t("cart.emptyTitle")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Browse products from verified Ruyenzi businesses.
+          {t("cart.emptyBody")}
         </p>
         <Button asChild className="mt-6">
           <Link to="/products" search={{ q: undefined, category: undefined }}>
-            Start shopping
+            {t("common.startShopping")}
           </Link>
         </Button>
       </div>
@@ -37,7 +39,7 @@ function CartPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Your cart</h1>
+      <h1 className="text-2xl font-bold">{t("cart.title")}</h1>
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         <div className="space-y-4">
           {items.map((row) => (
@@ -64,7 +66,7 @@ function CartPage() {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      aria-label="Decrease"
+                      aria-label={t("cart.decrease")}
                       onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity - 1 })}
                     >
                       <Minus className="h-3.5 w-3.5" />
@@ -74,7 +76,7 @@ function CartPage() {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      aria-label="Increase"
+                      aria-label={t("cart.increase")}
                       onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity + 1 })}
                     >
                       <Plus className="h-3.5 w-3.5" />
@@ -84,7 +86,7 @@ function CartPage() {
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 text-muted-foreground"
-                    aria-label="Remove item"
+                    aria-label={t("cart.remove")}
                     onClick={() => removeItem.mutate(row.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -96,21 +98,21 @@ function CartPage() {
         </div>
 
         <aside className="surface-card h-fit p-6">
-          <h2 className="font-semibold">Order summary</h2>
+          <h2 className="font-semibold">{t("cart.summary")}</h2>
           <div className="mt-4 flex justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
+            <span className="text-muted-foreground">{t("cart.subtotal")}</span>
             <span className="font-medium">{formatRWF(subtotal)}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm">
-            <span className="text-muted-foreground">Delivery (Ruyenzi)</span>
-            <span className="font-medium">Free during pilot</span>
+            <span className="text-muted-foreground">{t("cart.delivery")}</span>
+            <span className="font-medium">{t("cart.free")}</span>
           </div>
           <div className="mt-4 flex justify-between border-t border-border pt-4 text-base font-semibold">
-            <span>Total</span>
+            <span>{t("common.total")}</span>
             <span className="text-primary">{formatRWF(subtotal)}</span>
           </div>
           <Button asChild className="mt-6 w-full" size="lg">
-            <Link to="/checkout">Proceed to checkout</Link>
+            <Link to="/checkout">{t("cart.checkout")}</Link>
           </Button>
         </aside>
       </div>

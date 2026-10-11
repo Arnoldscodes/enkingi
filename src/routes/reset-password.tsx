@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/reset-password")({
 });
 
 function ResetPasswordPage() {
+  const { t } = useT();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
@@ -35,19 +37,19 @@ function ResetPasswordPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Password updated");
+    toast.success(t("reset.done"));
     void navigate({ to: "/" });
   };
 
   return (
     <div className="container-page flex justify-center py-14">
       <form onSubmit={submit} className="surface-card w-full max-w-md space-y-5 p-8">
-        <h1 className="text-2xl font-bold">Set a new password</h1>
+        <h1 className="text-2xl font-bold">{t("reset.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          Open this page from the reset link we emailed you, then choose a new password.
+          {t("reset.body")}
         </p>
         <div className="space-y-2">
-          <Label htmlFor="new-password">New password</Label>
+          <Label htmlFor="new-password">{t("reset.new")}</Label>
           <Input
             id="new-password"
             type="password"
@@ -58,7 +60,7 @@ function ResetPasswordPage() {
           />
         </div>
         <Button type="submit" className="w-full" disabled={saving}>
-          {saving ? "Saving…" : "Update password"}
+          {saving ? t("common.saving") : t("reset.update")}
         </Button>
       </form>
     </div>

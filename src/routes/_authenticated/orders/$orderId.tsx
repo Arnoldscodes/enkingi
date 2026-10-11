@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatRWF } from "@/lib/format";
 import { ORDER_STATUS_LABEL, TRACKING_STEPS, type Order } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/orders/$orderId")({
 });
 
 function OrderDetail() {
+  const { t } = useT();
   const { orderId } = Route.useParams();
 
   const order = useQuery({
@@ -57,9 +59,9 @@ function OrderDetail() {
   if (!order.data) {
     return (
       <div className="container-page py-20 text-center">
-        <h1 className="text-xl font-semibold">Order not found</h1>
+        <h1 className="text-xl font-semibold">{t("order.notFound")}</h1>
         <Button asChild className="mt-4">
-          <Link to="/orders">My orders</Link>
+          <Link to="/orders">{t("orders.title")}</Link>
         </Button>
       </div>
     );
@@ -71,18 +73,18 @@ function OrderDetail() {
 
   return (
     <div className="container-page py-10">
-      <p className="text-sm text-muted-foreground">Order</p>
+      <p className="text-sm text-muted-foreground">{t("order.label")}</p>
       <h1 className="text-2xl font-bold">{data.order_number}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        {data.sellers?.business_name} • placed {formatDate(data.created_at)}
+        {data.sellers?.business_name} • {t("order.placed", { date: formatDate(data.created_at) })}
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         <div className="surface-card p-6">
-          <h2 className="font-semibold">Delivery tracking</h2>
+          <h2 className="font-semibold">{t("order.tracking")}</h2>
           {rejected ? (
             <p className="mt-4 text-sm text-destructive">
-              This order was rejected by the seller. Please contact them or place a new order.
+              {t("order.rejected")}
             </p>
           ) : (
             <ol className="mt-6 space-y-6">
@@ -101,10 +103,10 @@ function OrderDetail() {
                     </span>
                     <div>
                       <p className={`text-sm font-medium ${done ? "" : "text-muted-foreground"}`}>
-                        {ORDER_STATUS_LABEL[step]}
+                        {t(`status.${step}`)}
                       </p>
                       {index === currentIndex && (
-                        <p className="text-xs text-muted-foreground">Current status</p>
+                        <p className="text-xs text-muted-foreground">{t("order.current")}</p>
                       )}
                     </div>
                   </li>
@@ -113,7 +115,7 @@ function OrderDetail() {
             </ol>
           )}
 
-          <h3 className="mt-8 font-semibold">Items</h3>
+          <h3 className="mt-8 font-semibold">{t("order.items")}</h3>
           <ul className="mt-4 space-y-3">
             {(data.order_items ?? []).map((item) => (
               <li key={item.id} className="flex items-center gap-3">
@@ -137,14 +139,14 @@ function OrderDetail() {
         </div>
 
         <aside className="surface-card h-fit p-6 text-sm">
-          <h2 className="font-semibold">Delivery details</h2>
+          <h2 className="font-semibold">{t("order.details")}</h2>
           <p className="mt-3 text-muted-foreground">{data.delivery_address}</p>
           <p className="text-muted-foreground">{data.phone}</p>
           <p className="mt-3 text-muted-foreground">
-            Payment: {data.payment_method === "mobile_money" ? "Mobile Money" : "Cash on delivery"}
+            {t("order.payment")}: {data.payment_method === "mobile_money" ? t("order.momo") : t("order.cod")}
           </p>
           <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold">
-            <span>Total</span>
+            <span>{t("common.total")}</span>
             <span className="text-primary">{formatRWF(Number(data.total))}</span>
           </div>
         </aside>

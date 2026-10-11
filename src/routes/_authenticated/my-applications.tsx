@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate } from "@/lib/format";
 import { APPLICATION_STATUSES, applicationStatusLabel, employmentLabel } from "@/lib/jobs";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/my-applications")({
   head: () => ({
@@ -51,6 +52,7 @@ interface MyApplication {
 }
 
 function MyApplicationsPage() {
+  const { t } = useT();
   const { user } = useAuth();
 
   const applications = useQuery({
@@ -71,9 +73,9 @@ function MyApplicationsPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">My job applications</h1>
+      <h1 className="text-2xl font-bold">{t("apps.title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Follow where each application stands with the employer.
+        {t("apps.subtitle")}
       </p>
 
       <div className="mt-8 space-y-4">
@@ -81,9 +83,9 @@ function MyApplicationsPage() {
           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)
         ) : (applications.data ?? []).length === 0 ? (
           <div className="surface-card p-8 text-center">
-            <p className="text-sm text-muted-foreground">You have not applied for any job yet.</p>
+            <p className="text-sm text-muted-foreground">{t("apps.none")}</p>
             <Button asChild className="mt-4">
-              <Link to="/careers">Browse jobs</Link>
+              <Link to="/careers">{t("apps.browse")}</Link>
             </Button>
           </div>
         ) : (
@@ -95,6 +97,7 @@ function MyApplicationsPage() {
 }
 
 function ApplicationCard({ app }: { app: MyApplication }) {
+  const { t } = useT();
   const seller = app.jobs?.sellers;
   const rejected = app.status === "rejected";
   const currentStep = STEPS.indexOf(app.status as (typeof STEPS)[number]);
@@ -109,20 +112,20 @@ function ApplicationCard({ app }: { app: MyApplication }) {
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="font-semibold">{app.jobs?.title ?? "Job removed"}</h2>
+            <h2 className="font-semibold">{app.jobs?.title ?? t("apps.removed")}</h2>
             <p className="text-xs text-muted-foreground">
               {seller?.business_name}
-              {app.jobs && ` • ${employmentLabel(app.jobs.employment_type)} • ${app.jobs.location}`}
+              {app.jobs && ` • ${t(`emp.${app.jobs.employment_type}`)} • ${app.jobs.location}`}
             </p>
           </div>
         </div>
         <Badge variant={rejected ? "destructive" : app.status === "accepted" ? "default" : "secondary"}>
-          {applicationStatusLabel(app.status)}
+          {t(`appstatus.${app.status}`)}
         </Badge>
       </div>
 
       <p className="mt-3 text-sm text-muted-foreground">
-        {STATUS_HINT[app.status] ?? applicationStatusLabel(app.status)}
+        {t(`apphint.${app.status}`)}
       </p>
 
       {!rejected && (
@@ -136,7 +139,7 @@ function ApplicationCard({ app }: { app: MyApplication }) {
                     done ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                   }`}
                 >
-                  {APPLICATION_STATUSES.find((s) => s.value === step)?.label ?? step}
+                  {t(`appstatus.${step}`)}
                 </span>
                 {index < STEPS.length - 1 && <span className="h-px w-4 bg-border" aria-hidden />}
               </li>
@@ -148,12 +151,12 @@ function ApplicationCard({ app }: { app: MyApplication }) {
       {app.interview_at && (
         <p className="mt-4 flex items-center gap-2 text-sm">
           <CalendarClock className="h-4 w-4 text-primary" />
-          Interview on {new Date(app.interview_at).toLocaleString("en-GB")}
+          {t("apps.interviewOn", { date: new Date(app.interview_at).toLocaleString("en-GB") })}
         </p>
       )}
       {app.interview_note && <p className="mt-1 text-sm text-muted-foreground">{app.interview_note}</p>}
 
-      <p className="mt-4 text-xs text-muted-foreground">Applied on {formatDate(app.created_at)}</p>
+      <p className="mt-4 text-xs text-muted-foreground">{t("apps.appliedOn", { date: formatDate(app.created_at) })}</p>
     </article>
   );
 }

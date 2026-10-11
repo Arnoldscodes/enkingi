@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { BadgeCheck, MapPin } from "lucide-react";
 import type { Seller } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export function SellerCard({ seller }: { seller: Seller }) {
+  const { t } = useT();
   return (
     <Link
       to="/stores/$slug"
@@ -22,7 +24,7 @@ export function SellerCard({ seller }: { seller: Seller }) {
       <div className="p-4">
         <div className="flex items-center gap-2">
           <h3 className="font-medium">{seller.business_name}</h3>
-          <BadgeCheck className="h-4 w-4 text-primary" aria-label="Verified seller" />
+          <BadgeCheck className="h-4 w-4 text-primary" aria-label={t("common.verified")} />
         </div>
         <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" /> {seller.location}

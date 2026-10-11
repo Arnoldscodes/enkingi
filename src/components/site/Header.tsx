@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, ShoppingCart, User, Search, LogOut, Store, Shield } from "lucide-react";
+import { Menu, ShoppingCart, User, Search, LogOut, Store, Shield, Languages } from "lucide-react";
+import { LANGUAGES, useT } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -16,15 +17,41 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 
 const NAV = [
-  { to: "/products", label: "Shop" },
-  { to: "/stores", label: "Local businesses" },
-  { to: "/careers", label: "Careers" },
-  { to: "/become-a-seller", label: "Sell on eNkingi" },
-  { to: "/contact", label: "Contact us" },
-];
+  { to: "/products", label: "nav.shop" },
+  { to: "/stores", label: "nav.stores" },
+  { to: "/careers", label: "nav.careers" },
+  { to: "/become-a-seller", label: "nav.sell" },
+  { to: "/contact", label: "nav.contact" },
+] as const;
+
+function LanguageSwitcher({ compact }: { compact?: boolean }) {
+  const { lang, setLang, t } = useT();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size={compact ? "icon" : "sm"} aria-label={t("nav.language")} className="gap-1">
+          <Languages className="h-5 w-5" />
+          {!compact && <span className="text-xs font-semibold">{lang.toUpperCase()}</span>}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {LANGUAGES.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => setLang(option.value)}
+            className={option.value === lang ? "font-semibold text-primary" : ""}
+          >
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function Header() {
   const { user, isSeller, isAdmin, signOut } = useAuth();
+  const { t } = useT();
   const { count } = useCart();
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
@@ -52,7 +79,7 @@ export function Header() {
               to={item.to}
               className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
-              {item.label}
+              {t(item.label)}
             </Link>
           ))}
         </nav>
@@ -63,15 +90,16 @@ export function Header() {
             <Input
               value={term}
               onChange={(e) => setTerm(e.target.value)}
-              placeholder="Search products in Ruyenzi"
+              placeholder={t("search.placeholderHeader")}
               className="pl-9"
-              aria-label="Search products"
+              aria-label={t("search.products")}
             />
           </div>
         </form>
 
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
-          <Button asChild variant="ghost" size="icon" aria-label="Cart" className="relative">
+          <LanguageSwitcher />
+          <Button asChild variant="ghost" size="icon" aria-label={t("nav.cart")} className="relative">
             <Link to="/cart">
               <ShoppingCart className="h-5 w-5" />
               {count > 0 && (
@@ -85,49 +113,49 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Account">
+                <Button variant="ghost" size="icon" aria-label={t("nav.account")}>
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuItem asChild>
-                  <Link to="/profile">My profile</Link>
+                  <Link to="/profile">{t("nav.profile")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/orders">My orders</Link>
+                  <Link to="/orders">{t("nav.orders")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/my-applications">My job applications</Link>
+                  <Link to="/my-applications">{t("nav.applications")}</Link>
                 </DropdownMenuItem>
                 {isSeller && (
                   <DropdownMenuItem asChild>
                     <Link to="/seller">
-                      <Store className="mr-2 h-4 w-4" /> Seller dashboard
+                      <Store className="mr-2 h-4 w-4" /> {t("nav.sellerDashboard")}
                     </Link>
                   </DropdownMenuItem>
                 )}
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin">
-                      <Shield className="mr-2 h-4 w-4" /> Admin
+                      <Shield className="mr-2 h-4 w-4" /> {t("nav.admin")}
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => void signOut()}>
-                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                  <LogOut className="mr-2 h-4 w-4" /> {t("nav.signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild size="sm" className="hidden sm:inline-flex">
-              <Link to="/auth">Sign in</Link>
+              <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
           )}
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menu">
+              <Button variant="ghost" size="icon" className="md:hidden" aria-label={t("nav.menu")}>
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -141,7 +169,7 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-secondary"
                   >
-                    {item.label}
+                    {t(item.label)}
                   </Link>
                 ))}
                 {!user && (
@@ -150,7 +178,7 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-secondary"
                   >
-                    Sign in
+                    {t("nav.signIn")}
                   </Link>
                 )}
               </div>

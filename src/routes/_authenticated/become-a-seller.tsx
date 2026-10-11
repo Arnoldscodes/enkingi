@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { ImageUploader } from "@/components/site/ImageUploader";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/become-a-seller")({
   head: () => ({
@@ -38,6 +39,7 @@ function slugify(value: string) {
 }
 
 function BecomeSellerPage() {
+  const { t } = useT();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
@@ -91,7 +93,7 @@ function BecomeSellerPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Application submitted — our team will verify your business.");
+    toast.success(t("seller.submitted"));
     void navigate({ to: "/seller" });
   };
 
@@ -102,15 +104,15 @@ function BecomeSellerPage() {
           <h1 className="text-xl font-semibold">{existing.data.business_name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {existing.data.status === "approved"
-              ? "Your storefront is verified and live on eNkingi."
+              ? t("seller.approved")
               : existing.data.status === "suspended"
-                ? "Your storefront is suspended. Please contact the eNkingi team."
+                ? t("seller.suspended")
                 : existing.data.status === "rejected"
-                ? "Your application was not approved. Please contact the eNkingi team."
-                : "Your application is pending verification by the eNkingi team."}
+                ? t("seller.rejected")
+                : t("seller.pending")}
           </p>
           <Button asChild className="mt-6">
-            <Link to="/seller">Go to seller dashboard</Link>
+            <Link to="/seller">{t("seller.dashboard")}</Link>
           </Button>
         </div>
       </div>
@@ -119,41 +121,40 @@ function BecomeSellerPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Become a seller</h1>
+      <h1 className="text-2xl font-bold">{t("seller.title")}</h1>
       <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-        Register your Ruyenzi business. Our team verifies every seller before the storefront becomes
-        visible to customers.
+        {t("seller.intro")}
       </p>
 
       <form onSubmit={submit} className="surface-card mt-8 max-w-2xl space-y-5 p-6">
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="business">Business name</Label>
+            <Label htmlFor="business">{t("seller.business")}</Label>
             <Input id="business" required value={form.business_name} onChange={set("business_name")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="owner">Owner name</Label>
+            <Label htmlFor="owner">{t("seller.owner")}</Label>
             <Input id="owner" required value={form.owner_name} onChange={set("owner_name")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t("seller.phone")}</Label>
             <Input id="phone" required value={form.phone} onChange={set("phone")} placeholder="+250 78..." />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("common.email")}</Label>
             <Input id="email" type="email" value={form.email} onChange={set("email")} />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="location">Location in Ruyenzi</Label>
+            <Label htmlFor="location">{t("seller.location")}</Label>
             <Input id="location" required value={form.location} onChange={set("location")} />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="description">Business description</Label>
+            <Label htmlFor="description">{t("seller.description")}</Label>
             <Textarea id="description" rows={4} value={form.description} onChange={set("description")} />
           </div>
           <div className="space-y-2">
             <ImageUploader
-              label="Business logo"
+              label={t("seller.logo")}
               bucket="seller-assets"
               value={form.logo_url ? [form.logo_url] : []}
               onChange={(urls) => setForm((prev) => ({ ...prev, logo_url: urls[0] ?? "" }))}
@@ -161,7 +162,7 @@ function BecomeSellerPage() {
           </div>
           <div className="space-y-2">
             <ImageUploader
-              label="Cover image"
+              label={t("seller.cover")}
               bucket="seller-assets"
               value={form.cover_url ? [form.cover_url] : []}
               onChange={(urls) => setForm((prev) => ({ ...prev, cover_url: urls[0] ?? "" }))}
@@ -169,7 +170,7 @@ function BecomeSellerPage() {
           </div>
         </div>
         <Button type="submit" size="lg" disabled={saving}>
-          {saving ? "Submitting…" : "Submit for verification"}
+          {saving ? t("seller.submitting") : t("seller.submit")}
         </Button>
       </form>
     </div>

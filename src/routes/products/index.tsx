@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { Product } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 interface ProductSearch {
   q?: string | undefined;
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/products/")({
 });
 
 function ProductsPage() {
+  const { t } = useT();
   const { q, category } = Route.useSearch();
   const navigate = useNavigate();
   const [term, setTerm] = useState(q ?? "");
@@ -79,9 +81,9 @@ function ProductsPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Shop Ruyenzi</h1>
+      <h1 className="text-2xl font-bold">{t("products.title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Every product below comes from a verified business inside Ruyenzi.
+        {t("products.subtitle")}
       </p>
 
       <form
@@ -96,9 +98,9 @@ function ProductsPage() {
           <Input
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            placeholder="Search products"
+            placeholder={t("search.products")}
             className="h-11 pl-10"
-            aria-label="Search products"
+            aria-label={t("search.products")}
           />
         </div>
       </form>
@@ -109,7 +111,7 @@ function ProductsPage() {
           variant={category ? "outline" : "default"}
           onClick={() => setSearch({ q, category: undefined })}
         >
-          All
+          {t("common.all")}
         </Button>
         {(categories.data ?? []).map((c) => (
           <Button
@@ -118,7 +120,7 @@ function ProductsPage() {
             variant={category === c.slug ? "default" : "outline"}
             onClick={() => setSearch({ q, category: c.slug })}
           >
-            {c.name}
+            {categoryName(t, c.slug, c.name)}
           </Button>
         ))}
       </div>
@@ -131,11 +133,11 @@ function ProductsPage() {
 
       {!products.isLoading && (products.data ?? []).length === 0 && (
         <div className="surface-card mt-8 p-10 text-center">
-          <p className="font-medium">No products found</p>
+          <p className="font-medium">{t("products.none")}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Try another search, or{" "}
+            {t("products.tryAnother")}{" "}
             <Link to="/products" search={{ q: undefined, category: undefined }} className="text-primary">
-              browse everything
+              {t("products.browseAll")}
             </Link>
             .
           </p>

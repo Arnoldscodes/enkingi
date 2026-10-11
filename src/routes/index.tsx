@@ -28,6 +28,7 @@ import { resolveImageUrl } from "@/lib/upload";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
 import type { HeroSlide } from "@/lib/heroSlides";
 import heroImage from "@/assets/hero-ruyenzi.jpg";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,6 +61,7 @@ const CATEGORY_ICONS: Record<string, typeof Smartphone> = {
 };
 
 function Home() {
+  const { t } = useT();
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
   const [slideIndex, setSlideIndex] = useState(0);
@@ -142,31 +144,31 @@ function Home() {
         <div className="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20">
           <div>
             <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
-              Pilot • Ruyenzi, Kigali
+              {t("home.pilot")}
             </span>
             <div key={activeSlide?.id ?? "static"} className="transition-opacity duration-700">
               <h1 className="mt-5 text-4xl font-bold leading-tight md:text-5xl">
-                {activeSlide?.headline || hero?.headline || "Fair Prices From Your Neighborhood"}
+                {activeSlide?.headline || hero?.headline || t("home.headline")}
               </h1>
               <p className="mt-4 max-w-md text-base text-muted-foreground">
                 {activeSlide?.subtitle ||
                   hero?.subtitle ||
-                  "Discover trusted businesses in Ruyenzi and shop with confidence."}
+                  t("home.subtitle")}
               </p>
             </div>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 {activeSlide ? (
                   <a href={activeSlide.button_link || "/products"}>
-                    {activeSlide.button_text || "Shop Now"}
+                    {activeSlide.button_text || t("home.shopNow")}
                   </a>
                 ) : (
-                  <Link to="/products">{hero?.primary_button_text || "Shop Now"}</Link>
+                  <Link to="/products">{hero?.primary_button_text || t("home.shopNow")}</Link>
                 )}
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link to="/become-a-seller">
-                  {hero?.secondary_button_text || "Become a Seller"}
+                  {hero?.secondary_button_text || t("home.becomeSeller")}
                 </Link>
               </Button>
             </div>
@@ -185,12 +187,12 @@ function Home() {
                 <Input
                   value={term}
                   onChange={(e) => setTerm(e.target.value)}
-                  placeholder="Search rice, phones, kitenge…"
+                  placeholder={t("search.placeholderHome")}
                   className="h-12 rounded-xl bg-background pl-10 pr-28"
-                  aria-label="Search products"
+                  aria-label={t("search.products")}
                 />
                 <Button type="submit" className="absolute right-1.5 top-1.5 h-9">
-                  Search
+                  {t("search.button")}
                 </Button>
               </div>
             </form>
@@ -207,7 +209,7 @@ function Home() {
 
 
       <section className="container-page py-14">
-        <h2 className="text-xl font-semibold">Shop by category</h2>
+        <h2 className="text-xl font-semibold">{t("home.categories")}</h2>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {(categories.data ?? []).map((category) => {
             const Icon = CATEGORY_ICONS[category.slug] ?? ShoppingBasket;
@@ -221,7 +223,7 @@ function Home() {
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                   <Icon className="h-5 w-5" />
                 </span>
-                <span className="text-sm font-medium">{category.name}</span>
+                <span className="text-sm font-medium">{categoryName(t, category.slug, category.name)}</span>
               </Link>
             );
           })}
@@ -230,13 +232,13 @@ function Home() {
 
       <section className="container-page pb-14">
         <div className="flex items-end justify-between">
-          <h2 className="text-xl font-semibold">Featured products</h2>
+          <h2 className="text-xl font-semibold">{t("home.featured")}</h2>
           <Link
             to="/products"
             search={{ q: undefined, category: undefined }}
             className="inline-flex items-center gap-1 text-sm font-medium text-primary"
           >
-            See all <ArrowRight className="h-4 w-4" />
+            {t("common.seeAll")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -250,9 +252,9 @@ function Home() {
 
       <section className="container-page pb-14">
         <div className="flex items-end justify-between">
-          <h2 className="text-xl font-semibold">Featured local businesses</h2>
+          <h2 className="text-xl font-semibold">{t("home.featuredSellers")}</h2>
           <Link to="/stores" className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-            See all <ArrowRight className="h-4 w-4" />
+            {t("common.seeAll")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -264,23 +266,23 @@ function Home() {
 
       <section className="border-y border-border bg-secondary/40 py-14">
         <div className="container-page">
-          <h2 className="text-xl font-semibold">Why eNkingi</h2>
+          <h2 className="text-xl font-semibold">{t("home.why")}</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {[
               {
                 icon: Scale,
-                title: "Fair Pricing",
-                body: "Clear RWF prices from neighbours you know — no hidden markups, no guessing.",
+                title: t("home.fairTitle"),
+                body: t("home.fairBody"),
               },
               {
                 icon: ShieldCheck,
-                title: "Trusted Sellers",
-                body: "Every storefront is reviewed and verified before it appears on eNkingi.",
+                title: t("home.trustTitle"),
+                body: t("home.trustBody"),
               },
               {
                 icon: Truck,
-                title: "Fast Local Delivery",
-                body: "Orders move within Ruyenzi, so your delivery arrives the same day.",
+                title: t("home.fastTitle"),
+                body: t("home.fastBody"),
               },
             ].map((item) => (
               <div key={item.title} className="surface-card p-6">

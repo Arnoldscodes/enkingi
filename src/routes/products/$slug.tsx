@@ -12,6 +12,7 @@ import { formatRWF } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import type { Product } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params }) => ({
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/products/$slug")({
 });
 
 function ProductPage() {
+  const { t } = useT();
   const { slug } = Route.useParams();
   const { user } = useAuth();
   const { addItem } = useCart();
@@ -87,10 +89,10 @@ function ProductPage() {
   if (!item) {
     return (
       <div className="container-page py-20 text-center">
-        <h1 className="text-xl font-semibold">Product not found</h1>
+        <h1 className="text-xl font-semibold">{t("product.notFound")}</h1>
         <Button asChild className="mt-4">
           <Link to="/products" search={{ q: undefined, category: undefined }}>
-            Back to shop
+            {t("product.back")}
           </Link>
         </Button>
       </div>
@@ -99,14 +101,14 @@ function ProductPage() {
 
   const handleAdd = () => {
     if (!user) {
-      toast.info("Sign in to add items to your cart");
+      toast.info(t("product.signInToAdd"));
       void navigate({ to: "/auth" });
       return;
     }
     addItem.mutate(
       { productId: item.id, quantity },
       {
-        onSuccess: () => toast.success("Added to cart"),
+        onSuccess: () => toast.success(t("product.added")),
         onError: (error) => toast.error(error.message),
       },
     );
@@ -134,7 +136,7 @@ function ProductPage() {
                   className={`h-20 w-20 overflow-hidden rounded-lg border ${
                     index === activeImage ? "border-primary" : "border-border"
                   }`}
-                  aria-label={`View image ${index + 1}`}
+                  aria-label={t("product.viewImage", { n: index + 1 })}
                 >
                   <img src={image} alt="" className="h-full w-full object-cover" loading="lazy" />
                 </button>
@@ -161,7 +163,7 @@ function ProductPage() {
 
           <p className="mt-5 text-3xl font-bold text-primary">{formatRWF(Number(item.price))}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {item.stock > 0 ? `${item.stock} in stock` : "Currently out of stock"}
+            {item.stock > 0 ? t("product.inStock", { n: item.stock }) : t("product.unavailable")}
           </p>
 
           <p className="mt-6 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
@@ -174,7 +176,7 @@ function ProductPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setQuantity((v) => Math.max(1, v - 1))}
-                aria-label="Decrease quantity"
+                aria-label={t("product.decrease")}
               >
                 <Minus className="h-4 w-4" />
               </Button>
@@ -183,25 +185,25 @@ function ProductPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setQuantity((v) => Math.min(item.stock || 1, v + 1))}
-                aria-label="Increase quantity"
+                aria-label={t("product.increase")}
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
             <Button size="lg" onClick={handleAdd} disabled={item.stock === 0 || addItem.isPending}>
-              <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+              <ShoppingCart className="mr-2 h-4 w-4" /> {t("product.addToCart")}
             </Button>
           </div>
 
           <p className="mt-4 text-xs text-muted-foreground">
-            Delivered inside Ruyenzi. Pay with Mobile Money or cash on delivery.
+            {t("product.deliveryNote")}
           </p>
         </div>
       </div>
 
       {(related.data ?? []).length > 0 && (
         <section className="mt-16">
-          <h2 className="text-xl font-semibold">Related products from nearby sellers</h2>
+          <h2 className="text-xl font-semibold">{t("product.related")}</h2>
           <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
             {(related.data ?? []).map((p) => (
               <ProductCard key={p.id} product={p} />
