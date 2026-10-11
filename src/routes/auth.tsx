@@ -146,7 +146,7 @@ function AuthPage() {
                 onClick={() => void forgotPassword()}
                 className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
               >
-                Forgot your password?
+                {t("auth.forgot")}
               </button>
             </form>
           </TabsContent>
