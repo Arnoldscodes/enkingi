@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { formatRWF, generateOrderNumber } from "@/lib/format";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/_authenticated/checkout")({
 });
 
 function CheckoutPage() {
+  const { t } = useT();
   const { user } = useAuth();
   const { items, subtotal, invalidate } = useCart();
   const navigate = useNavigate();
@@ -110,10 +112,10 @@ function CheckoutPage() {
 
       await supabase.from("cart_items").delete().eq("user_id", user.id);
       await invalidate();
-      toast.success("Order placed! Your seller has been notified.");
+      toast.success(t("checkout.success"));
       void navigate({ to: "/orders/$orderId", params: { orderId: firstOrderId } });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not place the order");
+      toast.error(error instanceof Error ? error.message : t("checkout.failed"));
     } finally {
       setPlacing(false);
     }
@@ -122,10 +124,10 @@ function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="container-page py-20 text-center">
-        <h1 className="text-xl font-semibold">Nothing to check out</h1>
+        <h1 className="text-xl font-semibold">{t("checkout.nothing")}</h1>
         <Button asChild className="mt-6">
           <Link to="/products" search={{ q: undefined, category: undefined }}>
-            Browse products
+            {t("common.browseProducts")}
           </Link>
         </Button>
       </div>
@@ -134,21 +136,21 @@ function CheckoutPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Checkout</h1>
+      <h1 className="text-2xl font-bold">{t("checkout.title")}</h1>
       <form onSubmit={placeOrder} className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         <div className="surface-card space-y-5 p-6">
           <div className="space-y-2">
-            <Label htmlFor="address">Delivery address (inside Ruyenzi)</Label>
+            <Label htmlFor="address">{t("checkout.address")}</Label>
             <Input
               id="address"
               required
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="e.g. Ruyenzi Centre, near the market, house 12"
+              placeholder={t("checkout.addressPh")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone number</Label>
+            <Label htmlFor="phone">{t("common.phone")}</Label>
             <Input
               id="phone"
               required
@@ -158,27 +160,27 @@ function CheckoutPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Delivery notes (optional)</Label>
+            <Label htmlFor="notes">{t("checkout.notes")}</Label>
             <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
           <div className="space-y-3">
-            <Label>Payment method</Label>
+            <Label>{t("checkout.payment")}</Label>
             <RadioGroup value={payment} onValueChange={setPayment} className="gap-3">
               <label className="flex items-center gap-3 rounded-xl border border-border p-4 text-sm">
-                <RadioGroupItem value="mobile_money" /> Mobile Money (pay on confirmation)
+                <RadioGroupItem value="mobile_money" /> {t("checkout.momo")}
               </label>
               <label className="flex items-center gap-3 rounded-xl border border-border p-4 text-sm">
-                <RadioGroupItem value="cash_on_delivery" /> Cash on delivery
+                <RadioGroupItem value="cash_on_delivery" /> {t("checkout.cod")}
               </label>
             </RadioGroup>
             <p className="text-xs text-muted-foreground">
-              Payments are collected by the seller on delivery during the pilot.
+              {t("checkout.paymentNote")}
             </p>
           </div>
         </div>
 
         <aside className="surface-card h-fit p-6">
-          <h2 className="font-semibold">Your order</h2>
+          <h2 className="font-semibold">{t("checkout.yourOrder")}</h2>
           <ul className="mt-4 space-y-3 text-sm">
             {items.map((row) => (
               <li key={row.id} className="flex justify-between gap-3">
@@ -190,11 +192,11 @@ function CheckoutPage() {
             ))}
           </ul>
           <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold">
-            <span>Total</span>
+            <span>{t("common.total")}</span>
             <span className="text-primary">{formatRWF(subtotal)}</span>
           </div>
           <Button type="submit" size="lg" className="mt-6 w-full" disabled={placing}>
-            {placing ? "Placing order…" : "Place order"}
+            {placing ? t("checkout.placing") : t("checkout.place")}
           </Button>
         </aside>
       </form>

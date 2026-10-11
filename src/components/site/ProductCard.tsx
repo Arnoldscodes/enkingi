@@ -2,8 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { BadgeCheck } from "lucide-react";
 import { formatRWF } from "@/lib/format";
 import type { Product } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export function ProductCard({ product }: { product: Product }) {
+  const { t } = useT();
   const image = product.images?.[0];
   return (
     <Link
@@ -30,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
           </p>
         )}
         <p className="pt-1 text-base font-semibold text-primary">{formatRWF(Number(product.price))}</p>
-        {product.stock === 0 && <p className="text-xs text-destructive">Out of stock</p>}
+        {product.stock === 0 && <p className="text-xs text-destructive">{t("common.outOfStock")}</p>}
       </div>
     </Link>
   );

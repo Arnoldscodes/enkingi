@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
+  const { t } = useT();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Welcome back");
+    toast.success(t("auth.welcomeBack"));
     void navigate({ to: "/" });
   };
 
@@ -66,13 +68,13 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Account created. You can start shopping.");
+    toast.success(t("auth.created"));
     void navigate({ to: "/" });
   };
 
   const forgotPassword = async () => {
     if (!email) {
-      toast.error("Enter your email first, then tap reset.");
+      toast.error(t("auth.enterEmail"));
       return;
     }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -82,7 +84,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Password reset link sent. Check your inbox.");
+    toast.success(t("auth.resetSent"));
   };
 
   const googleSignIn = async () => {
@@ -93,7 +95,7 @@ function AuthPage() {
       },
     });
     if (error) {
-      toast.error("Google sign-in failed. Please try again.");
+      toast.error(t("auth.googleFailed"));
     }
     // Supabase redirects the browser to Google itself — no manual navigate needed.
   };
@@ -101,33 +103,33 @@ function AuthPage() {
   return (
     <div className="container-page flex justify-center py-14">
       <div className="surface-card w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold">Welcome to eNkingi</h1>
+        <h1 className="text-2xl font-bold">{t("auth.welcome")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Shop trusted Ruyenzi businesses and track every delivery.
+          {t("auth.subtitle")}
         </p>
 
         <Button variant="outline" className="mt-6 w-full" onClick={() => void googleSignIn()}>
-          Continue with Google
+          {t("auth.google")}
         </Button>
 
         <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> or use email <span className="h-px flex-1 bg-border" />
+          <span className="h-px flex-1 bg-border" /> {t("auth.orEmail")} <span className="h-px flex-1 bg-border" />
         </div>
 
         <Tabs defaultValue="signin">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign in</TabsTrigger>
-            <TabsTrigger value="signup">Create account</TabsTrigger>
+            <TabsTrigger value="signin">{t("auth.signIn")}</TabsTrigger>
+            <TabsTrigger value="signup">{t("auth.createAccount")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="signin">
             <form className="mt-4 space-y-4" onSubmit={signIn}>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("common.email")}</Label>
                 <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("auth.password")}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -137,14 +139,14 @@ function AuthPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                Sign in
+                {t("auth.signIn")}
               </Button>
               <button
                 type="button"
                 onClick={() => void forgotPassword()}
                 className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
               >
-                Forgot your password?
+                {t("auth.forgot")}
               </button>
             </form>
           </TabsContent>
@@ -152,11 +154,11 @@ function AuthPage() {
           <TabsContent value="signup">
             <form className="mt-4 space-y-4" onSubmit={signUp}>
               <div className="space-y-2">
-                <Label htmlFor="name">Full name</Label>
+                <Label htmlFor="name">{t("common.fullName")}</Label>
                 <Input id="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone number</Label>
+                <Label htmlFor="phone">{t("common.phone")}</Label>
                 <Input
                   id="phone"
                   placeholder="+250 78..."
@@ -165,7 +167,7 @@ function AuthPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email-up">Email</Label>
+                <Label htmlFor="email-up">{t("common.email")}</Label>
                 <Input
                   id="email-up"
                   type="email"
@@ -175,7 +177,7 @@ function AuthPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password-up">Password</Label>
+                <Label htmlFor="password-up">{t("auth.password")}</Label>
                 <Input
                   id="password-up"
                   type="password"
@@ -186,7 +188,7 @@ function AuthPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                Create account
+                {t("auth.createAccount")}
               </Button>
             </form>
           </TabsContent>

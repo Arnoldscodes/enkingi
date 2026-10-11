@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const CONTACT_EMAIL = "enkingientreprise@gmail.com";
 export const CONTACT_PHONE = "+250 791 861 439";
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { t } = useT();
   const { user } = useAuth();
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -56,17 +58,16 @@ function ContactPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Message sent. We will reply by email soon.");
+    toast.success(t("contact.sent"));
     setForm({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
     <div className="container-page py-12">
       <div className="max-w-2xl">
-        <h1 className="text-3xl font-bold">Talk to us</h1>
+        <h1 className="text-3xl font-bold">{t("contact.title")}</h1>
         <p className="mt-3 text-muted-foreground">
-          Questions about an order, your storefront or delivery inside Ruyenzi? Send us a message and
-          the eNkingi team will get back to you by email.
+          {t("contact.intro")}
         </p>
       </div>
 
@@ -74,7 +75,7 @@ function ContactPage() {
         <form onSubmit={submit} className="surface-card space-y-4 p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Your name</Label>
+              <Label htmlFor="name">{t("contact.name")}</Label>
               <Input
                 id="name"
                 required
@@ -84,7 +85,7 @@ function ContactPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Your email</Label>
+              <Label htmlFor="email">{t("contact.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -96,28 +97,28 @@ function ContactPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject">{t("contact.subject")}</Label>
             <Input
               id="subject"
               value={form.subject}
               onChange={(e) => update("subject", e.target.value)}
-              placeholder="Order, selling, delivery…"
+              placeholder={t("contact.subjectPh")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message">{t("contact.message")}</Label>
             <Textarea
               id="message"
               required
               rows={6}
               value={form.message}
               onChange={(e) => update("message", e.target.value)}
-              placeholder="How can we help?"
+              placeholder={t("contact.messagePh")}
             />
           </div>
           <Button type="submit" disabled={sending}>
             <Send className="mr-2 h-4 w-4" />
-            {sending ? "Sending…" : "Send message"}
+            {sending ? t("common.sending") : t("contact.send")}
           </Button>
         </form>
 
@@ -126,7 +127,7 @@ function ContactPage() {
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Mail className="h-5 w-5" />
             </span>
-            <h2 className="mt-4 font-semibold">Email us directly</h2>
+            <h2 className="mt-4 font-semibold">{t("contact.emailUs")}</h2>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-1 block break-all text-sm font-medium text-primary"
@@ -138,7 +139,7 @@ function ContactPage() {
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Phone className="h-5 w-5" />
             </span>
-            <h2 className="mt-4 font-semibold">Call or WhatsApp</h2>
+            <h2 className="mt-4 font-semibold">{t("contact.call")}</h2>
             <a
               href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`}
               className="mt-1 block text-sm font-medium text-primary"
@@ -150,9 +151,9 @@ function ContactPage() {
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
               <MapPin className="h-5 w-5" />
             </span>
-            <h2 className="mt-4 font-semibold">Where we work</h2>
+            <h2 className="mt-4 font-semibold">{t("contact.where")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Ruyenzi, Kigali, Rwanda. Deliveries are inside Ruyenzi during the pilot.
+              {t("contact.whereBody")}
             </p>
           </div>
         </aside>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { Product, Seller } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/stores/$slug")({
   head: ({ params }) => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/stores/$slug")({
 });
 
 function StorePage() {
+  const { t } = useT();
   const { slug } = Route.useParams();
 
   const seller = useQuery({
@@ -56,9 +58,9 @@ function StorePage() {
   if (!seller.data) {
     return (
       <div className="container-page py-20 text-center">
-        <h1 className="text-xl font-semibold">Store not found</h1>
+        <h1 className="text-xl font-semibold">{t("store.notFound")}</h1>
         <Button asChild className="mt-4">
-          <Link to="/stores">All businesses</Link>
+          <Link to="/stores">{t("store.all")}</Link>
         </Button>
       </div>
     );
@@ -85,7 +87,7 @@ function StorePage() {
           <div className="min-w-48 flex-1">
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold">{store.business_name}</h1>
-              <BadgeCheck className="h-5 w-5 text-primary" aria-label="Verified" />
+              <BadgeCheck className="h-5 w-5 text-primary" aria-label={t("common.verified")} />
             </div>
             <p className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1">
@@ -99,7 +101,7 @@ function StorePage() {
         </div>
         <p className="mt-5 max-w-2xl text-sm text-muted-foreground">{store.description}</p>
 
-        <h2 className="mt-10 text-lg font-semibold">Products</h2>
+        <h2 className="mt-10 text-lg font-semibold">{t("store.products")}</h2>
         <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
           {(products.data ?? []).map((product) => (
             <ProductCard key={product.id} product={product} />

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { HeroSlide } from "@/lib/heroSlides";
+import { useT, categoryName } from "@/lib/i18n";
 
 interface Props {
   slides: HeroSlide[];
@@ -12,6 +13,7 @@ interface Props {
 
 /** Rotating hero visual with fade/slide transitions and navigation dots. */
 export function HeroCarousel({ slides, index, onIndexChange, loading, fallbackImage }: Props) {
+  const { t } = useT();
   const count = slides.length;
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function HeroCarousel({ slides, index, onIndexChange, loading, fallbackIm
             <button
               key={slide.id}
               type="button"
-              aria-label={`Show slide ${i + 1}`}
+              aria-label={t("home.showSlide", { n: i + 1 })}
               aria-current={i === index}
               onClick={() => onIndexChange(i)}
               className={`h-2.5 rounded-full transition-all ${

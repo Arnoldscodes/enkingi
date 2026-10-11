@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SellerCard } from "@/components/site/SellerCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Seller } from "@/lib/types";
+import { useT, categoryName } from "@/lib/i18n";
 
 export const Route = createFileRoute("/stores/")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/stores/")({
 });
 
 function StoresPage() {
+  const { t } = useT();
   const sellers = useQuery({
     queryKey: ["sellers"],
     queryFn: async (): Promise<Seller[]> => {
@@ -40,9 +42,9 @@ function StoresPage() {
 
   return (
     <div className="container-page py-10">
-      <h1 className="text-2xl font-bold">Local businesses</h1>
+      <h1 className="text-2xl font-bold">{t("stores.title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Verified storefronts operating inside Ruyenzi.
+        {t("stores.subtitle")}
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sellers.isLoading
