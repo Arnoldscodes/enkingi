@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep theme state in the shared ThemeProvider and apply the root dark class; all pages reuse semantic CSS tokens and the preference survives navigation and refresh.

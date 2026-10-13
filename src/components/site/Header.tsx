@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
+import { ThemeSwitcher } from "@/components/site/ThemeSwitcher";
 
 const NAV = [
   { to: "/products", label: "nav.shop" },
@@ -99,6 +100,7 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
           <LanguageSwitcher />
+          <ThemeSwitcher />
           <Button asChild variant="ghost" size="icon" aria-label={t("nav.cart")} className="relative">
             <Link to="/cart">
               <ShoppingCart className="h-5 w-5" />
