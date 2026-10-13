@@ -16,6 +16,7 @@ import { LanguageProvider } from "@/lib/i18n";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/hooks/useTheme";
 
 function NotFoundComponent() {
   return (
@@ -153,6 +154,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <LanguageProvider>
       <AuthProvider>
         <div className="flex min-h-screen flex-col">
@@ -166,6 +168,7 @@ function RootComponent() {
         <Toaster />
       </AuthProvider>
       </LanguageProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
