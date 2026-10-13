@@ -321,7 +321,7 @@ const rw: Record<TranslationKey, string> = {
   "footer.becomeSeller": "Ba umucuruzi",
   "footer.contact": "Aho mutubona",
   "footer.talk": "Vugana natwe",
-  "footer.delivery": "Tugeza ibicuruzwa i Ruyenzi gusa. Ibiciro biri mu mafaranga y'u Rwanda (RWF).",
+  "footer.delivery": "Tugeza ibicuruzwa ku Ruyenzi uwo munsi. .",
   "footer.made": "Byakorewe mu Rwanda.",
 
   "common.loading": "Birimo gufunguka…",
