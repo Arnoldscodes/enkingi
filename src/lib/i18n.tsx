@@ -287,6 +287,19 @@ const en = {
   "error.title": "This page didn't load",
   "error.body": "Something went wrong on our end. You can try refreshing or head back home.",
   "error.retry": "Try again",
+  // Cookies
+  "cookies.title": "Cookies & privacy",
+  "cookies.body": "We use necessary cookies to keep you signed in and secure. With your permission we also use anonymous analytics to see which products people look at, so we can improve eNkingi. We never collect passwords, payment details or what you type at checkout.",
+  "cookies.necessary": "Strictly necessary",
+  "cookies.necessaryBody": "Sign-in, cart, language and theme. Always on.",
+  "cookies.analytics": "Anonymous analytics",
+  "cookies.analyticsBody": "Page and product views, searches and cart activity with a random ID. Turning this off deletes the ID.",
+  "cookies.acceptAll": "Accept all",
+  "cookies.reject": "Reject optional",
+  "cookies.manage": "Manage preferences",
+  "cookies.save": "Save preferences",
+  "cookies.cancel": "Cancel",
+  "footer.cookies": "Cookie settings",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -554,6 +567,19 @@ const rw: Record<TranslationKey, string> = {
   "error.title": "Iyi paji ntiyafungutse",
   "error.body": "Habaye ikibazo kuri twe. Ongera ufungure paji cyangwa usubire ahabanza.",
   "error.retry": "Ongera ugerageze",
+  // Cookies
+  "cookies.title": "Kuki n'ubuzima bwite",
+  "cookies.body": "Dukoresha kuki za ngombwa kugira ngo ugume winjiye kandi utekanye. Ubitwemereye, dukoresha kandi isesengura ritazwi nyirarwo kugira ngo tumenye ibicuruzwa abantu bareba, maze tunoze eNkingi. Ntidukusanya ijambo ry'ibanga, amakuru yo kwishyura cyangwa ibyo wandika mu kwishyura.",
+  "cookies.necessary": "Za ngombwa",
+  "cookies.necessaryBody": "Kwinjira, igitebo, ururimi n'isura. Buri gihe birakora.",
+  "cookies.analytics": "Isesengura ritazwi nyirarwo",
+  "cookies.analyticsBody": "Amapaji n'ibicuruzwa birebwa, ibishakishwa n'igitebo, hakoreshejwe nimero itunguranye. Ubihagaritse, iyo nimero irasibwa.",
+  "cookies.acceptAll": "Emera byose",
+  "cookies.reject": "Anga izitari ngombwa",
+  "cookies.manage": "Hitamo ibyo wemera",
+  "cookies.save": "Bika amahitamo",
+  "cookies.cancel": "Reka",
+  "footer.cookies": "Igenamiterere rya kuki",
 };
 
 const DICTIONARIES: Record<Language, Record<TranslationKey, string>> = { en, rw };
