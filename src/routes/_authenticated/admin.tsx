@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HomepageManager } from "@/components/admin/HomepageManager";
+import { AnalyticsPanel } from "@/components/admin/AnalyticsPanel";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate, formatRWF } from "@/lib/format";
 import { ORDER_STATUS_LABEL, type Order, type Product, type Seller } from "@/lib/types";
@@ -191,7 +192,12 @@ function AdminPage() {
           <TabsTrigger value="orders">Orders</TabsTrigger>
           <TabsTrigger value="jobs">Jobs</TabsTrigger>
           <TabsTrigger value="homepage">Homepage</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="analytics" className="mt-6">
+          <AnalyticsPanel />
+        </TabsContent>
 
         <TabsContent value="homepage" className="mt-6">
           <HomepageManager />
