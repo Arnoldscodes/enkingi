@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,6 +61,14 @@ function CheckoutPage() {
     }
   }, [profile.data]);
 
+  const startedRef = useRef(false);
+  useEffect(() => {
+    if (!startedRef.current && items.length > 0) {
+      startedRef.current = true;
+      track("checkout_started", { quantity: items.length, value: subtotal });
+    }
+  }, [items.length, subtotal]);
+
   const placeOrder = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user || items.length === 0) return;
@@ -110,6 +119,7 @@ function CheckoutPage() {
         if (itemsError) throw itemsError;
       }
 
+      track("purchase", { quantity: items.length, value: subtotal });
       await supabase.from("cart_items").delete().eq("user_id", user.id);
       await invalidate();
       toast.success(t("checkout.success"));

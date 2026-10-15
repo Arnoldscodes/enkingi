@@ -1,6 +1,7 @@
+import { track } from "@/lib/analytics";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BadgeCheck, MapPin, Minus, Plus, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,6 +55,11 @@ function ProductPage() {
       return data as unknown as Product | null;
     },
   });
+
+  const viewedId = product.data?.id;
+  useEffect(() => {
+    if (viewedId) track("product_view", { product_id: viewedId });
+  }, [viewedId]);
 
   const related = useQuery({
     queryKey: ["related", product.data?.category_id, product.data?.id],

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useT } from "@/lib/i18n";
+import { openCookiePreferences } from "@/lib/analytics";
 
 const CONTACT_EMAIL = "enkingientreprise@gmail.com";
 const CONTACT_PHONE = "+250 791 861 439";
@@ -84,7 +85,10 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} eNkingi. {t("footer.made")}
+        © {new Date().getFullYear()} eNkingi. {t("footer.made")}{" "}
+        <button type="button" onClick={openCookiePreferences} className="ml-2 underline hover:text-foreground">
+          {t("footer.cookies")}
+        </button>
       </div>
     </footer>
   );
