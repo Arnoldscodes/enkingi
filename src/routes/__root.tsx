@@ -17,6 +17,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { CookieConsent, PageViewTracker } from "@/components/site/CookieConsent";
 
 function NotFoundComponent() {
   return (
@@ -166,6 +167,8 @@ function RootComponent() {
           <Footer />
         </div>
         <Toaster />
+        <CookieConsent />
+        <PageViewTracker />
       </AuthProvider>
       </LanguageProvider>
       </ThemeProvider>

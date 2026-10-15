@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          anon_id: string
+          category: string | null
+          created_at: string
+          event_type: string
+          id: string
+          path: string | null
+          product_id: string | null
+          quantity: number | null
+          search_term: string | null
+          session_id: string
+          source: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          value: number | null
+        }
+        Insert: {
+          anon_id: string
+          category?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          path?: string | null
+          product_id?: string | null
+          quantity?: number | null
+          search_term?: string | null
+          session_id: string
+          source?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value?: number | null
+        }
+        Update: {
+          anon_id?: string
+          category?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          path?: string | null
+          product_id?: string | null
+          quantity?: number | null
+          search_term?: string | null
+          session_id?: string
+          source?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           applicant_id: string | null
@@ -630,6 +684,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      analytics_summary: { Args: { _days?: number }; Returns: Json }
       can_see_order: { Args: { _order_id: string }; Returns: boolean }
       has_role: {
         Args: {

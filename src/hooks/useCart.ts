@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import type { CartRow } from "@/lib/types";
+import { track } from "@/lib/analytics";
 
 const CART_SELECT =
   "id, quantity, product_id, products(*, sellers(business_name, slug, status, location))";
@@ -36,18 +37,23 @@ export function useCart() {
           .update({ quantity: existing.quantity + quantity })
           .eq("id", existing.id);
         if (error) throw error;
+        track("add_to_cart", { product_id: productId, quantity });
         return;
       }
       const { error } = await supabase
         .from("cart_items")
         .insert({ user_id: userId, product_id: productId, quantity });
       if (error) throw error;
+      track("add_to_cart", { product_id: productId, quantity });
     },
     onSuccess: invalidate,
   });
 
   const updateQuantity = useMutation({
     mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
+      const row = (cart.data ?? []).find((r) => r.id === id);
+      if (row && quantity > row.quantity) track("add_to_cart", { product_id: row.product_id, quantity: quantity - row.quantity });
+      if (row && quantity < row.quantity) track("remove_from_cart", { product_id: row.product_id, quantity: row.quantity - Math.max(quantity, 0) });
       if (quantity < 1) {
         const { error } = await supabase.from("cart_items").delete().eq("id", id);
         if (error) throw error;
@@ -61,6 +67,8 @@ export function useCart() {
 
   const removeItem = useMutation({
     mutationFn: async (id: string) => {
+      const row = (cart.data ?? []).find((r) => r.id === id);
+      if (row) track("remove_from_cart", { product_id: row.product_id, quantity: row.quantity });
       const { error } = await supabase.from("cart_items").delete().eq("id", id);
       if (error) throw error;
     },

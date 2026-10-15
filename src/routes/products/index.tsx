@@ -1,6 +1,7 @@
+import { track } from "@/lib/analytics";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -74,6 +75,13 @@ function ProductsPage() {
     },
     enabled: !category || !!categories.data,
   });
+
+  useEffect(() => {
+    if (q) track("search", { search_term: q, category: category ?? null });
+  }, [q]);
+  useEffect(() => {
+    if (category) track("category_view", { category });
+  }, [category]);
 
   const setSearch = (next: ProductSearch) => {
     void navigate({ to: "/products", search: next });

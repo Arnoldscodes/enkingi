@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep theme state in the shared ThemeProvider and apply the root dark class; all pages reuse semantic CSS tokens and the preference survives navigation and refresh.
+- Analytics are first-party and consent-gated via src/lib/analytics.ts track(); never send PII or form contents, and never call it before consent. Why: privacy requirements.
