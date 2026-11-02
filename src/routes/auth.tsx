@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useT, categoryName } from "@/lib/i18n";
+import { BrandMark } from "@/components/site/BrandMark";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -103,6 +104,10 @@ function AuthPage() {
   return (
     <div className="container-page flex justify-center py-14">
       <div className="surface-card w-full max-w-md p-8">
+        <Link to="/" className="mb-5 flex items-center gap-3">
+          <BrandMark className="h-12 w-12" />
+          <span className="text-xl font-semibold tracking-tight">eNkingi</span>
+        </Link>
         <h1 className="text-2xl font-bold">{t("auth.welcome")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {t("auth.subtitle")}

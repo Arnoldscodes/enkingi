@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useT } from "@/lib/i18n";
 import { openCookiePreferences } from "@/lib/analytics";
+import { BrandMark } from "@/components/site/BrandMark";
 
 const CONTACT_EMAIL = "enkingientreprise@gmail.com";
 const CONTACT_PHONE = "+250 791 861 439";
@@ -12,9 +13,7 @@ export function Footer() {
       <div className="container-page grid gap-8 py-12 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold">
-              e
-            </span>
+            <BrandMark className="h-9 w-9" />
             <span className="text-lg font-semibold">eNkingi</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">

@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { ThemeSwitcher } from "@/components/site/ThemeSwitcher";
+import { BrandMark } from "@/components/site/BrandMark";
 
 const NAV = [
   { to: "/products", label: "nav.shop" },
@@ -67,9 +68,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
       <div className="container-page flex h-16 items-center gap-4">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold">
-            e
-          </span>
+          <BrandMark className="h-9 w-9" />
           <span className="text-lg font-semibold tracking-tight">eNkingi</span>
         </Link>
 
@@ -162,7 +161,10 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <SheetTitle className="mb-4">eNkingi</SheetTitle>
+              <div className="mb-4 flex items-center gap-2">
+                <BrandMark className="h-8 w-8" />
+                <SheetTitle>eNkingi</SheetTitle>
+              </div>
               <div className="flex flex-col gap-1">
                 {NAV.map((item) => (
                   <Link
