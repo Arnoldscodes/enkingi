@@ -351,7 +351,7 @@ const rw: Record<TranslationKey, string> = {
   "common.outOfStock": "Byashize",
   "common.all": "Byose",
 
-  "home.pilot": "Igerageza • Ruyenzi, Kigali",
+  "home.pilot": "Igerageza_Ruyenzi_Kigali",
   "home.headline": "Ibiciro Biboneye Biva Hafi Yawe",
   "home.subtitle": "Menya ubucuruzi bwizewe i Ruyenzi, uhahe ufite icyizere.",
   "home.shopNow": "Haha Ubu",
