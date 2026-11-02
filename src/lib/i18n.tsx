@@ -58,7 +58,7 @@ const en = {
   "common.all": "All",
 
   // Home
-  "home.pilot": "Pilot • Ruyenzi, Kigali",
+  "home.pilot": "Pilot_Ruyenzi_Kigali",
   "home.headline": "Fair Prices From Your Neighborhood",
   "home.subtitle": "Discover trusted businesses in Ruyenzi and shop with confidence.",
   "home.shopNow": "Shop Now",
