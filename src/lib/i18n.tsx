@@ -600,7 +600,7 @@ interface I18nState {
 const I18nContext = createContext<I18nState | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Language>("en");
+  const [lang, setLangState] = useState<Language>("rw");
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
