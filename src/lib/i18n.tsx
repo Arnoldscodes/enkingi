@@ -624,10 +624,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+const FALLBACK: I18nState = {
+  lang: "en",
+  setLang: () => undefined,
+  t: (key, vars) => translate("en", key, vars),
+};
+
+/** Falls back to English if the provider is missing (e.g. a hot-reload swapped the context). */
 export function useT(): I18nState {
-  const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error("useT must be used within LanguageProvider");
-  return ctx;
+  return useContext(I18nContext) ?? FALLBACK;
 }
 
 /** Translate a category name by its slug; unknown categories keep their stored name. */
