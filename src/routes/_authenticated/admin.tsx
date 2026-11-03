@@ -152,6 +152,20 @@ function AdminPage() {
     void queryClient.invalidateQueries({ queryKey: ["admin-products"] });
   };
 
+  const toggleFeatured = async (product: Product) => {
+    const { error } = await supabase
+      .from("products")
+      .update({ is_featured: !product.is_featured })
+      .eq("id", product.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(product.is_featured ? "Removed from featured" : "Added to featured");
+    void queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+    void queryClient.invalidateQueries({ queryKey: ["featured-products"] });
+  };
+
   if (loading) return null;
 
   if (!isAdmin) {
@@ -277,6 +291,14 @@ function AdminPage() {
                 <p className="text-xs text-muted-foreground">{product.sellers?.business_name}</p>
               </div>
               <span className="font-semibold text-primary">{formatRWF(Number(product.price))}</span>
+              {product.is_featured && <Badge>Featured</Badge>}
+              <Button
+                size="sm"
+                variant={product.is_featured ? "default" : "outline"}
+                onClick={() => void toggleFeatured(product)}
+              >
+                {product.is_featured ? "Remove from featured" : "Add to featured"}
+              </Button>
               <Button size="sm" variant="outline" onClick={() => void toggleProduct(product)}>
                 {product.is_active ? "Hide" : "Publish"}
               </Button>
