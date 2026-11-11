@@ -43,7 +43,7 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-label={t("cookies.title")}
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded-2xl border border-border bg-card p-5 text-card-foreground shadow-lg"
+      className="mobile-cookie-banner fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded-2xl border border-border bg-card p-5 text-card-foreground shadow-lg"
     >
       <h2 className="font-semibold">{t("cookies.title")}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{t("cookies.body")}</p>

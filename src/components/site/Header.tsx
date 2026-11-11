@@ -66,10 +66,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
-      <div className="container-page flex h-16 items-center gap-4">
-        <Link to="/" className="flex items-center gap-2 shrink-0">
+      <div className="container-page grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 md:flex md:gap-4">
+        <Link to="/" className="flex min-w-0 items-center gap-2 md:shrink-0">
           <BrandMark className="h-9 w-9" />
-          <span className="text-lg font-semibold tracking-tight">eNkingi</span>
+          <span className="truncate text-lg font-semibold tracking-tight">eNkingi</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -100,7 +100,7 @@ export function Header() {
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
           <LanguageSwitcher />
           <ThemeSwitcher />
-          <Button asChild variant="ghost" size="icon" aria-label={t("nav.cart")} className="relative">
+          <Button asChild variant="ghost" size="icon" aria-label={t("nav.cart")} className="relative hidden md:inline-flex">
             <Link to="/cart">
               <ShoppingCart className="h-5 w-5" />
               {count > 0 && (
@@ -114,7 +114,7 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label={t("nav.account")}>
+                <Button variant="ghost" size="icon" aria-label={t("nav.account")} className="hidden md:inline-flex">
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -149,7 +149,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild size="sm" className="hidden sm:inline-flex">
+            <Button asChild size="sm" className="hidden md:inline-flex">
               <Link to="/auth">{t("nav.signIn")}</Link>
             </Button>
           )}
