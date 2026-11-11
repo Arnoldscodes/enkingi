@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { formatRWF, generateOrderNumber } from "@/lib/format";
 import { useT, categoryName } from "@/lib/i18n";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/checkout")({
 function CheckoutPage() {
   const { t } = useT();
   const { user } = useAuth();
-  const { items, subtotal, invalidate } = useCart();
+  const { items, subtotal, invalidate, isLoading, isBusy } = useCart();
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -44,10 +45,11 @@ function CheckoutPage() {
     queryKey: ["profile", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return null;
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user!.id)
+        .eq("id", user.id)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -71,7 +73,7 @@ function CheckoutPage() {
 
   const placeOrder = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!user || items.length === 0) return;
+    if (!user || items.length === 0 || placing || isLoading || isBusy) return;
     setPlacing(true);
 
     try {
@@ -131,6 +133,7 @@ function CheckoutPage() {
     }
   };
 
+  if (isLoading) return <div className="container-page py-10"><Skeleton className="h-96 w-full" /></div>;
   if (items.length === 0) {
     return (
       <div className="container-page py-20 text-center">
@@ -163,6 +166,8 @@ function CheckoutPage() {
             <Label htmlFor="phone">{t("common.phone")}</Label>
             <Input
               id="phone"
+              type="tel"
+              autoComplete="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -193,14 +198,15 @@ function CheckoutPage() {
           <h2 className="font-semibold">{t("checkout.yourOrder")}</h2>
           <ul className="mt-4 space-y-3 text-sm">
             {items.map((row) => (
-              <li key={row.id} className="flex justify-between gap-3">
-                <span className="text-muted-foreground">
+              <li key={row.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
+                <span className="min-w-0 break-words text-muted-foreground">
                   {row.quantity} × {row.products?.title}
                 </span>
                 <span>{formatRWF(row.quantity * Number(row.products?.price ?? 0))}</span>
               </li>
             ))}
           </ul>
+          <div className="mt-4 flex justify-between text-sm"><span className="text-muted-foreground">{t("cart.delivery")}</span><span>{t("cart.free")}</span></div>
           <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold">
             <span>{t("common.total")}</span>
             <span className="text-primary">{formatRWF(subtotal)}</span>

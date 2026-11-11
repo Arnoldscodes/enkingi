@@ -11,6 +11,7 @@ import { useT, categoryName } from "@/lib/i18n";
 import { BrandMark } from "@/components/site/BrandMark";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({ next: search.next === "checkout" ? "checkout" : undefined }),
   head: () => ({
     meta: [
       { title: "Sign in or create an account | eNkingi" },
@@ -30,6 +31,7 @@ function AuthPage() {
   const { t } = useT();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { next } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,8 +39,8 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    if (user) void navigate({ to: "/" });
-  }, [user, navigate]);
+    if (user) void navigate({ to: next === "checkout" ? "/checkout" : "/" });
+  }, [user, navigate, next]);
 
   const signIn = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -50,7 +52,7 @@ function AuthPage() {
       return;
     }
     toast.success(t("auth.welcomeBack"));
-    void navigate({ to: "/" });
+    void navigate({ to: next === "checkout" ? "/checkout" : "/" });
   };
 
   const signUp = async (event: React.FormEvent) => {

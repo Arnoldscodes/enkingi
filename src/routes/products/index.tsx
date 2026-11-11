@@ -45,6 +45,7 @@ function ProductsPage() {
   const { q, category } = Route.useSearch();
   const navigate = useNavigate();
   const [term, setTerm] = useState(q ?? "");
+  useEffect(() => setTerm(q ?? ""), [q]);
 
   const categories = useQuery({
     queryKey: ["categories"],
@@ -95,7 +96,7 @@ function ProductsPage() {
       </p>
 
       <form
-        className="mt-6 max-w-xl"
+        className="sticky top-16 z-20 mt-6 max-w-xl bg-background py-2 md:static md:py-0"
         onSubmit={(e) => {
           e.preventDefault();
           setSearch({ q: term || undefined, category });
@@ -109,6 +110,7 @@ function ProductsPage() {
             placeholder={t("search.products")}
             className="h-11 pl-10"
             aria-label={t("search.products")}
+            enterKeyHint="search"
           />
         </div>
       </form>
@@ -133,7 +135,7 @@ function ProductsPage() {
         ))}
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {products.isLoading
           ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-72 rounded-xl" />)
           : (products.data ?? []).map((product) => <ProductCard key={product.id} product={product} />)}

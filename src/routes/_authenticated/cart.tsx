@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { formatRWF } from "@/lib/format";
 import { useT, categoryName } from "@/lib/i18n";
+import { useAuth } from "@/hooks/useAuth";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/cart")({
+export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
       { title: "Your cart | eNkingi" },
@@ -19,7 +22,10 @@ export const Route = createFileRoute("/_authenticated/cart")({
 
 function CartPage() {
   const { t } = useT();
-  const { items, subtotal, updateQuantity, removeItem, isLoading } = useCart();
+  const { items, subtotal, updateQuantity, removeItem, isLoading, isBusy } = useCart();
+  const { user } = useAuth();
+  const onError = (error: Error) => toast.error(error.message);
+  if (isLoading) return <div className="container-page space-y-4 py-10"><Skeleton className="h-8 w-40" /><Skeleton className="h-32 w-full" /><Skeleton className="h-32 w-full" /></div>;
 
   if (!isLoading && items.length === 0) {
     return (
@@ -54,8 +60,8 @@ function CartPage() {
                   />
                 )}
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{row.products?.title}</p>
+              <div className="min-w-0 flex-1">
+                <p className="break-words font-medium">{row.products?.title}</p>
                 <p className="text-xs text-muted-foreground">{row.products?.sellers?.business_name}</p>
                 <p className="mt-1 text-sm font-semibold text-primary">
                   {formatRWF(Number(row.products?.price ?? 0))}
@@ -65,9 +71,10 @@ function CartPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-10 w-10"
+                      disabled={isBusy}
                       aria-label={t("cart.decrease")}
-                      onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity - 1 })}
+                      onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity - 1 }, { onError })}
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </Button>
@@ -75,9 +82,10 @@ function CartPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-10 w-10"
+                      disabled={isBusy}
                       aria-label={t("cart.increase")}
-                      onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity + 1 })}
+                      onClick={() => updateQuantity.mutate({ id: row.id, quantity: row.quantity + 1 }, { onError })}
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </Button>
@@ -85,9 +93,10 @@ function CartPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground"
+                    className="h-10 w-10 text-muted-foreground"
+                    disabled={isBusy}
                     aria-label={t("cart.remove")}
-                    onClick={() => removeItem.mutate(row.id)}
+                    onClick={() => removeItem.mutate(row.id, { onError })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -111,8 +120,8 @@ function CartPage() {
             <span>{t("common.total")}</span>
             <span className="text-primary">{formatRWF(subtotal)}</span>
           </div>
-          <Button asChild className="mt-6 w-full" size="lg">
-            <Link to="/checkout">{t("cart.checkout")}</Link>
+          <Button asChild className="mt-6 h-12 w-full" size="lg" disabled={isBusy}>
+            {user ? <Link to="/checkout">{t("cart.checkout")}</Link> : <Link to="/auth" search={{ next: "checkout" }}>{t("mobile.signInCheckout")}</Link>}
           </Button>
         </aside>
       </div>
