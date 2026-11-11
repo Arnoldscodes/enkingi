@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/cart")({
+export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
       { title: "Your cart | eNkingi" },
