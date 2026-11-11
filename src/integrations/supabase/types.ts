@@ -569,36 +569,6 @@ export type Database = {
         }
         Relationships: []
       }
-            push_subscriptions: {
-        Row: {
-          id: string
-          user_id: string
-          token: string
-          platform: string
-          device_info: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          token: string
-          platform?: string
-          device_info?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          token?: string
-          platform?: string
-          device_info?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       reviews: {
         Row: {
           author_name: string | null

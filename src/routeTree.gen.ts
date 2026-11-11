@@ -13,11 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBecomeASellerRouteImport } from './routes/_authenticated/become-a-seller'
-import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedMyApplicationsRouteImport } from './routes/_authenticated/my-applications'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -51,6 +51,11 @@ const CareersRoute = CareersRouteImport.update({
   path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -72,11 +77,6 @@ const AuthenticatedBecomeASellerRoute =
     path: '/become-a-seller',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -154,11 +154,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/careers': typeof CareersRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
-  '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -177,11 +177,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/careers': typeof CareersRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/become-a-seller': typeof AuthenticatedBecomeASellerRoute
-  '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -202,11 +202,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/careers': typeof CareersRoute
+  '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/become-a-seller': typeof AuthenticatedBecomeASellerRoute
-  '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/my-applications': typeof AuthenticatedMyApplicationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -227,11 +227,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/careers'
+    | '/cart'
     | '/contact'
     | '/reset-password'
     | '/admin'
     | '/become-a-seller'
-    | '/cart'
     | '/checkout'
     | '/my-applications'
     | '/profile'
@@ -250,11 +250,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/careers'
+    | '/cart'
     | '/contact'
     | '/reset-password'
     | '/admin'
     | '/become-a-seller'
-    | '/cart'
     | '/checkout'
     | '/my-applications'
     | '/profile'
@@ -274,11 +274,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/careers'
+    | '/cart'
     | '/contact'
     | '/reset-password'
     | '/_authenticated/admin'
     | '/_authenticated/become-a-seller'
-    | '/_authenticated/cart'
     | '/_authenticated/checkout'
     | '/_authenticated/my-applications'
     | '/_authenticated/profile'
@@ -299,6 +299,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CareersRoute: typeof CareersRoute
+  CartRoute: typeof CartRoute
   ContactRoute: typeof ContactRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -337,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -363,13 +371,6 @@ declare module '@tanstack/react-router' {
       path: '/become-a-seller'
       fullPath: '/become-a-seller'
       preLoaderRoute: typeof AuthenticatedBecomeASellerRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/cart': {
-      id: '/_authenticated/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof AuthenticatedCartRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/checkout': {
@@ -469,7 +470,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedBecomeASellerRoute: typeof AuthenticatedBecomeASellerRoute
-  AuthenticatedCartRoute: typeof AuthenticatedCartRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedMyApplicationsRoute: typeof AuthenticatedMyApplicationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -484,7 +484,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedBecomeASellerRoute: AuthenticatedBecomeASellerRoute,
-  AuthenticatedCartRoute: AuthenticatedCartRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedMyApplicationsRoute: AuthenticatedMyApplicationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
@@ -504,6 +503,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CareersRoute: CareersRoute,
+  CartRoute: CartRoute,
   ContactRoute: ContactRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ProductsSlugRoute: ProductsSlugRoute,

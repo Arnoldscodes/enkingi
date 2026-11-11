@@ -8,6 +8,11 @@ export const LANGUAGES: { value: Language; label: string; short: string }[] = [
 const STORAGE_KEY = "enkingi-lang";
 
 const en = {
+  "mobile.navigation": "Shopping navigation",
+  "mobile.home": "Home",
+  "mobile.categories": "Categories",
+  "mobile.signInCheckout": "Sign in to checkout",
+  "mobile.cartError": "Your cart could not load. Please try again.",
   // Navigation
   "nav.shop": "Shop",
   "nav.stores": "Local businesses",
@@ -305,6 +310,11 @@ const en = {
 export type TranslationKey = keyof typeof en;
 
 const rw: Record<TranslationKey, string> = {
+  "mobile.navigation": "Aho wahitamo guhaha",
+  "mobile.home": "Ahabanza",
+  "mobile.categories": "Ibyiciro",
+  "mobile.signInCheckout": "Injira utumize",
+  "mobile.cartError": "Agaseke ntikafungutse. Ongera ugerageze.",
   "nav.shop": "Guhaha",
   "nav.stores": "Ubucuruzi bwo hafi",
   "nav.careers": "Akazi",

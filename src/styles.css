@@ -186,3 +186,20 @@
     var(--hero-end) 100%
   );
 }
+
+:root {
+  --mobile-nav-height: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+.mobile-bottom-nav { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.mobile-panel { max-height: 85dvh; overflow-y: auto; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); }
+@media (width < 48rem) {
+  .mobile-app-shell { padding-bottom: var(--mobile-nav-height); }
+  .mobile-purchase-bar { bottom: var(--mobile-nav-height); }
+  .mobile-product-page { padding-bottom: 9rem; }
+  .mobile-cookie-banner { bottom: calc(var(--mobile-nav-height) + 0.75rem); max-height: 65dvh; overflow-y: auto; }
+  .mobile-product-page ~ * { scroll-margin-bottom: 12rem; }
+  input, textarea, select { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

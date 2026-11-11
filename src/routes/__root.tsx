@@ -18,6 +18,8 @@ import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { CookieConsent, PageViewTracker } from "@/components/site/CookieConsent";
+import { CartProvider } from "@/hooks/useCart";
+import { MobileNavigation } from "@/components/site/MobileNavigation";
 
 function NotFoundComponent() {
   return (
@@ -159,7 +161,8 @@ function RootComponent() {
       <ThemeProvider>
       <LanguageProvider>
       <AuthProvider>
-        <div className="flex min-h-screen flex-col">
+      <CartProvider>
+        <div className="mobile-app-shell flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
             {/* Required: nested routes render here. */}
@@ -167,9 +170,11 @@ function RootComponent() {
           </main>
           <Footer />
         </div>
+        <MobileNavigation />
         <Toaster />
         <CookieConsent />
         <PageViewTracker />
+      </CartProvider>
       </AuthProvider>
       </LanguageProvider>
       </ThemeProvider>
