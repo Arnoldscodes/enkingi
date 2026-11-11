@@ -11,7 +11,7 @@ import { useT, categoryName } from "@/lib/i18n";
 import { BrandMark } from "@/components/site/BrandMark";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({ next: search.next === "checkout" ? "checkout" : undefined }),
+  validateSearch: (search: Record<string, unknown>): { next?: string } => ({ next: search["next"] === "checkout" ? "checkout" : undefined }),
   head: () => ({
     meta: [
       { title: "Sign in or create an account | eNkingi" },

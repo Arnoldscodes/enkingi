@@ -1,7 +1,6 @@
 
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import { firebaseApp } from "./firebase";
-import { supabase } from "@/integrations/supabase/client";
 
 export async function enablePushNotifications(userId: string) {
   if (typeof window === "undefined") {
@@ -51,11 +50,8 @@ export async function enablePushNotifications(userId: string) {
     updated_at: new Date().toISOString(),
   };
 
-  const { error } = await supabase
-    .from("push_subscriptions")
-    .upsert(subscriptionPayload, { onConflict: "token" });
-
-  if (error) throw error;
-
-  return token;
+  // Device registration is unavailable until notification storage is configured.
+  // Never claim success when this installation has no subscriptions table.
+  void subscriptionPayload;
+  throw new Error("Push notifications are not configured for this site yet.");
 }
