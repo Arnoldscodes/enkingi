@@ -18,6 +18,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `${params.slug.replace(/-/g, " ")} | eNkingi Ruyenzi` },
       {
         name: "description",
@@ -26,7 +28,7 @@ export const Route = createFileRoute("/products/$slug")({
       },
       { property: "og:title", content: `${params.slug.replace(/-/g, " ")} | eNkingi` },
       {
-        name: "og:description",
+        property: "og:description",
         content: "Buy from a verified Ruyenzi seller with fast local delivery.",
       },
     ],

@@ -18,6 +18,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Checkout | eNkingi Ruyenzi delivery" },
       {
         name: "description",
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/checkout")({
 function CheckoutPage() {
   const { t } = useT();
   const { user } = useAuth();
-  const { items, subtotal, invalidate, isLoading, isBusy } = useCart();
+  const { items, subtotal, invalidate, isLoading, isBusy, error: cartError, retry } = useCart();
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -133,6 +135,7 @@ function CheckoutPage() {
     }
   };
 
+  if (cartError) return <div className="container-page py-10"><p>{t("mobile.cartError")}</p><Button className="mt-4" onClick={retry}>{t("error.retry")}</Button></div>;
   if (isLoading) return <div className="container-page py-10"><Skeleton className="h-96 w-full" /></div>;
   if (items.length === 0) {
     return (

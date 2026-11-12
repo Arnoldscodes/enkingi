@@ -9,6 +9,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/stores/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Verified local businesses in Ruyenzi | eNkingi" },
       {
         name: "description",

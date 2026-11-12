@@ -14,6 +14,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "My profile | eNkingi" },
       { name: "description", content: "Update your name, phone number and Ruyenzi delivery address." },
       { property: "og:title", content: "My eNkingi profile" },

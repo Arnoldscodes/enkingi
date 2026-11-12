@@ -12,6 +12,8 @@ import { ORDER_STATUS_LABEL, type Order, type OrderStatus } from "@/lib/types";
 export const Route = createFileRoute("/_authenticated/seller/orders")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Storefront orders | eNkingi seller" },
       { name: "description", content: "Accept, prepare and deliver customer orders from your storefront." },
       { property: "og:title", content: "eNkingi storefront orders" },

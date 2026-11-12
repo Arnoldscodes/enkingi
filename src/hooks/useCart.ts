@@ -16,6 +16,7 @@ function useSharedCart() {
   const [guest, setGuest] = useState<CartRow[]>([]);
   const [ready, setReady] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<Error | null>(null);
   const busy = useRef(false);
   const merging = useRef(false);
   const guestRef = useRef(guest);
@@ -54,7 +55,7 @@ function useSharedCart() {
 
   useEffect(() => {
     if (!ready || !userId || !cart.data || merging.current || guestRef.current.length === 0) return;
-    merging.current = true; setSyncing(true);
+    merging.current = true; setSyncing(true); setSyncError(null);
     void (async () => {
       try {
         for (const row of [...guestRef.current]) {
@@ -63,7 +64,7 @@ function useSharedCart() {
           if (error) throw error;
           saveGuest(guestRef.current.filter(item => item.product_id !== row.product_id));
         }
-      } catch { /* Keep unmerged guest rows for a later retry. */ }
+      } catch (error) { setSyncError(error instanceof Error ? error : new Error("Cart synchronization failed")); }
       finally { await invalidate(); merging.current = false; setSyncing(false); }
     })();
   }, [ready, userId, cart.data]);
@@ -117,9 +118,9 @@ function useSharedCart() {
       const rows = userId ? (cart.data ?? []) : guestRef.current;
       const row = rows.find((r) => r.id === id);
       await change(async () => {
-      if (!userId) { saveGuest(setCartQuantity(rows, id, quantity)); return; }
       if (row && quantity > row.quantity) track("add_to_cart", { product_id: row.product_id, quantity: quantity - row.quantity });
       if (row && quantity < row.quantity) track("remove_from_cart", { product_id: row.product_id, quantity: row.quantity - Math.max(quantity, 0) });
+      if (!userId) { saveGuest(setCartQuantity(rows, id, quantity)); return; }
       if (quantity < 1) {
         const { error } = await supabase.from("cart_items").delete().eq("id", id);
         if (error) throw error;
@@ -137,8 +138,8 @@ function useSharedCart() {
       const rows = userId ? (cart.data ?? []) : guestRef.current;
       const row = rows.find((r) => r.id === id);
       await change(async () => {
-      if (!userId) { saveGuest(setCartQuantity(rows, id, 0)); return; }
       if (row) track("remove_from_cart", { product_id: row.product_id, quantity: row.quantity });
+      if (!userId) { saveGuest(setCartQuantity(rows, id, 0)); return; }
       const { error } = await supabase.from("cart_items").delete().eq("id", id);
       if (error) throw error;
       }, setCartQuantity(rows, id, 0));
@@ -150,7 +151,7 @@ function useSharedCart() {
   const count = items.reduce((sum, row) => sum + row.quantity, 0);
   const subtotal = items.reduce((sum, row) => sum + row.quantity * Number(row.products?.price ?? 0), 0);
 
-  return { items, count, subtotal, isLoading: loading || !ready || (!!userId && cart.isLoading) || syncing, isBusy: syncing || addItem.isPending || updateQuantity.isPending || removeItem.isPending, addItem, updateQuantity, removeItem, invalidate };
+  return { items, count, subtotal, error: userId ? cart.error ?? syncError : null, retry: () => { setSyncError(null); void cart.refetch(); }, isLoading: loading || !ready || (!!userId && cart.isLoading) || syncing || (!!userId && guest.length > 0 && !syncError), isBusy: syncing || addItem.isPending || updateQuantity.isPending || removeItem.isPending, addItem, updateQuantity, removeItem, invalidate };
 }
 
 const CartContext = createContext<ReturnType<typeof useSharedCart> | null>(null);

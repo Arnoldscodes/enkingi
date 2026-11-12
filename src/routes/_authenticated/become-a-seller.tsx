@@ -14,6 +14,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/_authenticated/become-a-seller")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Become a seller in Ruyenzi | eNkingi" },
       {
         name: "description",

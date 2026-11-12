@@ -31,6 +31,8 @@ import type { Product } from "@/lib/types";
 export const Route = createFileRoute("/_authenticated/seller/products")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Manage products | eNkingi seller" },
       { name: "description", content: "Add, edit and remove the products in your eNkingi storefront." },
       { property: "og:title", content: "Manage your eNkingi products" },

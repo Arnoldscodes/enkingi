@@ -38,6 +38,8 @@ import {
 export const Route = createFileRoute("/_authenticated/seller/careers")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Manage job posts | eNkingi seller" },
       { name: "description", content: "Post, edit and close jobs for your Ruyenzi business on eNkingi." },
       { property: "og:title", content: "Manage your eNkingi job posts" },

@@ -12,6 +12,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Track your order | eNkingi" },
       { name: "description", content: "Follow your eNkingi delivery from order placed to delivered." },
       { property: "og:title", content: "Track your eNkingi order" },
