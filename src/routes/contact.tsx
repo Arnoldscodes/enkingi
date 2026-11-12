@@ -79,6 +79,7 @@ function ContactPage() {
               <Input
                 id="name"
                 required
+                maxLength={120}
                 value={form.name}
                 onChange={(e) => update("name", e.target.value)}
                 placeholder="Keza Uwase"
@@ -90,6 +91,7 @@ function ContactPage() {
                 id="email"
                 type="email"
                 required
+                maxLength={254}
                 value={form.email}
                 onChange={(e) => update("email", e.target.value)}
                 placeholder="you@example.com"
@@ -100,6 +102,7 @@ function ContactPage() {
             <Label htmlFor="subject">{t("contact.subject")}</Label>
             <Input
               id="subject"
+              maxLength={200}
               value={form.subject}
               onChange={(e) => update("subject", e.target.value)}
               placeholder={t("contact.subjectPh")}
@@ -111,6 +114,7 @@ function ContactPage() {
               id="message"
               required
               rows={6}
+              maxLength={5000}
               value={form.message}
               onChange={(e) => update("message", e.target.value)}
               placeholder={t("contact.messagePh")}

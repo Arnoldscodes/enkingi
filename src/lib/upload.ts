@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 export type UploadBucket = "avatars" | "seller-assets" | "product-images";
 
 const LONG_LIVED_SECONDS = 60 * 60 * 24 * 365 * 10;
+const RESOLVED_LINK_SECONDS = 60 * 10;
 const STORAGE_REFERENCE_PREFIX = "storage://";
 
 export function toStorageReference(bucket: UploadBucket, urlOrReference: string): string {
@@ -35,7 +36,7 @@ export async function resolveImageUrl(reference: string | null): Promise<string 
 
   const { data, error } = await supabase.storage
     .from(stored.bucket)
-    .createSignedUrl(stored.path, LONG_LIVED_SECONDS);
+    .createSignedUrl(stored.path, RESOLVED_LINK_SECONDS);
   if (error || !data) throw error ?? new Error("Could not load image");
   return data.signedUrl;
 }

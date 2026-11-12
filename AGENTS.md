@@ -14,3 +14,6 @@
 - Keep one CartProvider for all cart consumers; guests persist locally and merge into existing authenticated cart rows on sign-in, so badges and pages share mutation state.
 - Keep /cart public and checkout protected; guest customers can review items before signing in to place an order.
 - Below the existing md breakpoint, reserve safe-area-aware space for bottom navigation and position purchase controls above it; desktop navigation stays unchanged.
+- Public categories use an explicit is_public flag; public reviews require an active product from an approved seller, so private catalog content stays restricted.
+- Guest contact and consent-gated analytics inserts remain available with database-enforced identity, format, size, and timestamp validation, rather than unconditional policies.
+- Storage reads allow owners, admins, references in published marketplace content, and the applicant or owning seller for CVs; resolved file links expire after ten minutes to limit private-document sharing.
