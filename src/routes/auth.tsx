@@ -14,6 +14,8 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { next?: string } => ({ next: search["next"] === "checkout" ? "checkout" : undefined }),
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Sign in or create an account | eNkingi" },
       {
         name: "description",

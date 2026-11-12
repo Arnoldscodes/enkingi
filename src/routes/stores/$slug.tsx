@@ -11,6 +11,8 @@ import { useT, categoryName } from "@/lib/i18n";
 export const Route = createFileRoute("/stores/$slug")({
   head: ({ params }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `${params.slug.replace(/-/g, " ")} | eNkingi Ruyenzi storefront` },
       {
         name: "description",

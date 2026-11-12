@@ -11,6 +11,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Your cart | eNkingi" },
       { name: "description", content: "Review the items in your eNkingi cart before checkout." },
       { property: "og:title", content: "Your eNkingi cart" },

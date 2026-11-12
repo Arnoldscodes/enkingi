@@ -15,6 +15,8 @@ import { employmentLabel, type Job } from "@/lib/jobs";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Admin console | eNkingi" },
       { name: "description", content: "Verify sellers and oversee products, orders and categories." },
       { property: "og:title", content: "eNkingi admin console" },

@@ -11,6 +11,8 @@ import type { Order } from "@/lib/types";
 export const Route = createFileRoute("/_authenticated/seller/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Seller dashboard | eNkingi" },
       { name: "description", content: "Track your eNkingi storefront orders, revenue and products." },
       { property: "og:title", content: "eNkingi seller dashboard" },
