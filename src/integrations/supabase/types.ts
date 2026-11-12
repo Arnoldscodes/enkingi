@@ -186,6 +186,7 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
+          is_public: boolean
           name: string
           slug: string
         }
@@ -193,6 +194,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          is_public?: boolean
           name: string
           slug: string
         }
@@ -200,6 +202,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          is_public?: boolean
           name?: string
           slug?: string
         }
@@ -685,6 +688,14 @@ export type Database = {
     }
     Functions: {
       analytics_summary: { Args: { _days?: number }; Returns: Json }
+      app_file_reference_matches: {
+        Args: { _bucket: string; _path: string; _reference: string }
+        Returns: boolean
+      }
+      can_read_app_file: {
+        Args: { _bucket: string; _path: string }
+        Returns: boolean
+      }
       can_see_order: { Args: { _order_id: string }; Returns: boolean }
       has_role: {
         Args: {
