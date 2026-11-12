@@ -171,7 +171,7 @@ function RootComponent() {
           <Footer />
         </div>
         <MobileNavigation />
-        <Toaster />
+        <Toaster position="top-center" />
         <CookieConsent />
         <PageViewTracker />
       </CartProvider>

@@ -24,9 +24,10 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const { t } = useT();
-  const { items, subtotal, updateQuantity, removeItem, isLoading, isBusy } = useCart();
+  const { items, subtotal, updateQuantity, removeItem, isLoading, isBusy, error, retry } = useCart();
   const { user } = useAuth();
   const onError = (error: Error) => toast.error(error.message);
+  if (error) return <div className="container-page py-10"><p>{t("mobile.cartError")}</p><Button onClick={retry} className="mt-4">{t("error.retry")}</Button></div>;
   if (isLoading) return <div className="container-page space-y-4 py-10"><Skeleton className="h-8 w-40" /><Skeleton className="h-32 w-full" /><Skeleton className="h-32 w-full" /></div>;
 
   if (!isLoading && items.length === 0) {
@@ -52,7 +53,7 @@ function CartPage() {
         <div className="space-y-4">
           {items.map((row) => (
             <div key={row.id} className="surface-card flex gap-4 p-4">
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
+              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-24 sm:w-24">
                 {row.products?.images?.[0] && (
                   <img
                     src={row.products.images[0]}
